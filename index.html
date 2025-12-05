@@ -1,110 +1,1341 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>自动跳转后台</title>
+	<style>
+		/* 仅保留基础样式，无任何UI展示 */
+		body { margin: 0; padding: 0; }
+		.hidden { display: none !important; }
+	</style>
+</head>
+<body>
+	<!-- 无任何可视界面，纯后台逻辑 -->
+	<script>
+		// 核心配置：跳转目标页面（注意：你写的indexonine.html可能是笔误，建议改为indexonline.html）
+		const ONLINE_PAGE = 'indexonine.html'; 
+		// 跳转延迟（毫秒），可根据需要调整，0为立即跳转
+		const JUMP_DELAY = 0;
+
+		/**
+		 * 读取本地存储的在线应用数据开关状态
+		 * @returns {boolean} 是否开启在线模式
+		 */
+		function getOnlineDataState() {
+			// 从localStorage读取状态，默认关闭
+			return localStorage.getItem('isOnlineDataEnabled') === 'true';
+		}
+
+		/**
+		 * 执行跳转逻辑
+		 */
+		function handleAutoJump() {
+			const isOnlineEnabled = getOnlineDataState();
+			
+			// 调试日志（上线可删除）
+			console.log('在线应用数据开关状态：', isOnlineEnabled ? '开启' : '关闭');
+			
+			// 开启则跳转，关闭则不处理（正常加载当前页）
+			if (isOnlineEnabled) {
+				console.log(`即将跳转到在线页面：${ONLINE_PAGE}`);
+				setTimeout(() => {
+					window.location.href = ONLINE_PAGE;
+				}, JUMP_DELAY);
+			} else {
+				console.log('未开启在线模式，保持当前页面');
+			}
+		}
+
+		// 页面加载完成后立即执行跳转检测
+		document.addEventListener('DOMContentLoaded', handleAutoJump);
+
+		// 额外：提供手动切换开关的方法（供其他页面调用，如设置页）
+		window.toggleOnlineData = function(enabled) {
+			localStorage.setItem('isOnlineDataEnabled', enabled.toString());
+			console.log('在线应用数据开关已设置为：', enabled);
+		};
+	</script>
+</body>
+</html>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>第一章节-绝处逢生</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>软件搜索下载</title>
   <style>
-	* {
-	  margin: 0;
-	  padding: 0;
-	  box-sizing: border-box;
+	:root {
+	  --nav-icon-size: 22px;
+	  --nav-text-size: 11px;
+	  --nav-height: 56px;
+	  --primary-color: #4CAF50;
+	  --text-secondary: #999;
 	}
-
-	html, body {
-	  height: 100%;
-	  overflow: hidden;
-	  position: fixed;
-	  width: 100%;
-	}
-
+	* { margin: 0; padding: 0; box-sizing: border-box; }
 	body {
-	  font-family: 'Microsoft YaHei', Arial, sans-serif;
-	  background: #000;
-	  height: 100vh;
+	  font-family: Arial, sans-serif;
+	  background-color: #f5f5f5;
+	  padding: 0;
+	  touch-action: pan-x pan-y;
+	  overflow-x: hidden;
+	  padding-bottom: var(--nav-height);
+	}
+	html {
+	  touch-action: manipulation;
+	  -webkit-text-size-adjust: none;
+	  -ms-text-size-adjust: none;
+	  text-size-adjust: none;
+	}
+
+	.search-section {
+	  background-color: white;
+	  padding: 8px 15px;
+	  border-bottom: none;
+	  position: relative;
+	}
+	.search-container {
 	  display: flex;
-	  justify-content: center;
 	  align-items: center;
+	  background-color: white;
+	  border: 1px solid #ddd;
+	  border-radius: 25px;
 	  overflow: hidden;
+	  transition: all 0.3s ease;
+	  margin-left: -5px;
+	  width: calc(85% - 5px);
+	}
+	.search-container:focus-within {
+	  border-color: #2196F3;
+	}
+	.search-icon-area {
+	  width: 50px; height: 36px;
+	  background-image: url('搜索.png');
+	  background-size: cover;
+	  background-position: center;
+	  background-repeat: no-repeat;
+	  background-color: #f5f5f5;
+	  flex-shrink: 0;
+	  margin-right: 0;
+	}
+	.search-box {
+	  flex: 1;
+	  padding: 8px 16px;
+	  border: none;
+	  font-size: 15px;
+	  outline: none;
+	  background-color: #f5f5f5;
+	  min-width: 0;
+	  transition: background-color 0.3s;
+	}
+	.search-box::placeholder {
+	  color: #999; font-size: 14px;
+	}
+	.search-actions {
+	  display: flex;
+	  align-items: center;
+	  padding: 0 8px 0 0;
+	  margin-left: 8px;
+	}
+	.search-text {
+	  color: #666;
+	  font-size: 14px;
+	  cursor: pointer;
+	  padding: 4px 8px;
+	  border-radius: 4px;
+	  transition: background-color 0.2s;
+	  white-space: nowrap;
+	}
+	.search-text:hover {
+	  background-color: #f0f0f0;
+	  color: #333;
+	}
+
+	.history-btn {
+	  position: absolute;
+	  right: 15px; top: 50%;
+	  transform: translateY(-50%);
+	  width: 40px; height: 40px;
+	  background-image: url('历史记录.jpg');
+	  background-size: contain;
+	  background-position: center;
+	  background-repeat: no-repeat;
+	  background-color: transparent;
+	  border: none; cursor: pointer;
+	  padding: 0; transition: all 0.2s;
+	  border-radius: 6px;
+	}
+	.history-btn:hover {
+	  background-color: #f5f5f5;
+	  transform: translateY(-50%) scale(1.05);
+	}
+	.history-btn:active {
+	  transform: translateY(-50%) scale(0.95);
+	}
+
+	.cancel-btn {
+	  position: absolute;
+	  right: 15px; top: 50%;
+	  transform: translateY(-50%);
+	  background: none; border: none;
+	  color: #2196F3;
+	  font-size: 14px;
+	  padding: 6px 12px;
+	  cursor: pointer;
+	  transition: all 0.2s;
+	  font-weight: bold;
+	  white-space: nowrap;
+	}
+	.cancel-btn:hover {
+	  background-color: #f0f0f0;
+	  border-radius: 4px;
+	}
+
+	.search-result-page {
 	  position: fixed;
-	  top: 0;
-	  left: 0;
-	  right: 0;
-	  bottom: 0;
+	  top: 0; left: 0;
+	  width: 100%; height: 100%;
+	  background-color: white;
+	  z-index: 1000;
+	  display: none;
+	  flex-direction: column;
+	}
+	.search-result-page.active {
+	  display: flex;
+	}
+	.search-result-header {
+	  background-color: white;
+	  padding: 8px 15px;
+	  border-bottom: 1px solid #e5e5e5;
+	  display: flex;
+	  align-items: center;
+	  position: sticky;
+	  top: 0; z-index: 1001;
+	  width: 100%;
+	}
+	.search-result-input-wrapper {
+	  display: flex;
+	  align-items: center;
+	  background-color: white;
+	  border: 1px solid #ddd;
+	  border-radius: 25px;
+	  overflow: hidden;
+	  transition: all 0.3s ease;
+	  margin-left: -5px;
+	  width: calc(85% - 5px);
+	  flex-shrink: 0;
+	}
+	.search-result-input-wrapper:focus-within {
+	  border-color: #2196F3;
+	}
+	.search-result-icon-area {
+	  width: 50px; height: 36px;
+	  background-image: url('搜索.png');
+	  background-size: cover;
+	  background-position: center;
+	  background-repeat: no-repeat;
+	  background-color: #f5f5f5;
+	  flex-shrink: 0;
+	  margin-right: 0;
+	}
+	.search-result-input {
+	  flex: 1;
+	  padding: 8px 16px;
+	  border: none;
+	  font-size: 15px;
+	  outline: none;
+	  background-color: #f5f5f5;
+	  min-width: 0;
+	  transition: background-color 0.3s;
+	}
+	.search-result-input::placeholder {
+	  color: #999; font-size: 14px;
+	}
+	.search-result-actions {
+	  display: flex;
+	  align-items: center;
+	  padding: 0 8px 0 0;
+	  margin-left: 8px;
 	}
 
-	/* 进入图片样式 */
-	.enter-image {
+	.software-list {
+	  padding: 0;
+	  flex: 1;
+	  overflow-y: auto;
+	  background-color: white;
+	}
+	.software-item {
+	  display: flex;
+	  align-items: center;
+	  padding: 15px;
+	  background-color: white;
+	  border-bottom: 1px solid #f0f0f0;
+	  transition: background-color 0.2s;
+	}
+	.software-item:hover {
+	  background-color: #f9f9f9;
+	}
+	.software-img {
+	  width: 50px; height: 50px;
+	  border-radius: 8px;
+	  margin-right: 15px;
+	  object-fit: cover;
+	}
+	.software-info {
+	  flex: 1;
+	  display: flex;
+	  flex-direction: column;
+	}
+	.software-name {
+	  font-size: 16px;
+	  font-weight: bold;
+	  color: #333;
+	  margin-bottom: 5px;
+	}
+	.software-score {
+	  color: #ff6b35;
+	  font-weight: bold;
+	  font-size: 14px;
+	}
+	.download-btn-main {
+	  padding: 8px 16px;
+	  background-color: #2196F3;
+	  color: white;
+	  border: none;
+	  border-radius: 15px;
+	  cursor: pointer;
+	  font-size: 14px;
+	  transition: background-color 0.3s;
+	  text-decoration: none;
+	  display: inline-block;
+	  text-align: center;
+	}
+	.download-btn-main:hover {
+	  background-color: #1976D2;
+	}
+	.download-btn-main[disabled] {
+	  background-color: #ccc;
+	  cursor: not-allowed;
+	}
+	.no-results {
+	  text-align: center;
+	  padding: 40px;
+	  color: #666;
+	  font-size: 16px;
+	  background-color: white;
+	}
+
+	.history-page {
 	  position: fixed;
-	  top: 0;
-	  left: 0;
-	  width: 100%;
-	  height: 100%;
+	  top: 0; left: 0;
+	  width: 100%; height: 100%;
+	  background-color: #f5f5f5;
+	  z-index: 1000;
+	  display: none;
+	  overflow-y: auto;
+	}
+	.history-page.active {
+	  display: block;
+	}
+	.history-header {
+	  background-color: white;
+	  padding: 8px 15px;
+	  border-bottom: 1px solid #e5e5e5;
+	  display: flex;
+	  align-items: center;
+	  position: sticky;
+	  top: 0; z-index: 1001;
+	}
+	.back-btn {
+	  background: none; border: none;
+	  font-size: 18px;
+	  color: #2196F3;
+	  margin-right: 15px;
+	  cursor: pointer;
+	  padding: 5px;
+	  border-radius: 50%;
+	  width: 35px; height: 35px;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	}
+	.back-btn:hover {
+	  background-color: #f0f0f0;
+	}
+	.history-title {
+	  font-size: 16px;
+	  font-weight: bold;
+	  color: #333;
+	  flex: 1;
+	}
+	.history-content {
+	  padding: 15px;
+	}
+	.history-search-item {
+	  background-color: white;
+	  margin-bottom: 15px;
+	  border-radius: 8px;
+	  overflow: hidden;
+	  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	}
+	.history-search-header {
+	  background-color: #f8f9fa;
+	  padding: 12px 15px;
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
+	  border-bottom: 1px solid #e5e5e5;
+	}
+	.history-search-keyword {
+	  font-size: 14px;
+	  color: #666;
+	  flex: 1;
+	}
+	.history-search-keyword strong {
+	  color: #333;
+	}
+	.history-search-btn {
+	  background-color: #81C784;
+	  color: white;
+	  border: none;
+	  border-radius: 15px;
+	  padding: 6px 12px;
+	  font-size: 12px;
+	  cursor: pointer;
+	  display: flex;
+	  align-items: center;
+	  gap: 4px;
+	  transition: background-color 0.3s;
+	}
+	.history-search-btn:hover {
+	  background-color: #66BB6A;
+	}
+	.history-search-results {
+	  padding: 0;
+	}
+	.history-result-item {
+	  display: flex;
+	  align-items: center;
+	  padding: 12px 15px;
+	  border-bottom: 1px solid #f0f0f0;
+	  transition: background-color 0.2s;
+	}
+	.history-result-item:last-child {
+	  border-bottom: none;
+	}
+	.history-result-item:hover {
+	  background-color: #f9f9f9;
+	}
+	.history-result-img {
+	  width: 40px; height: 40px;
+	  border-radius: 6px;
+	  margin-right: 12px;
 	  object-fit: cover;
-	  z-index: 9999;
+	}
+	.history-result-info {
+	  flex: 1;
+	  display: flex;
+	  flex-direction: column;
+	}
+	.history-result-name {
+	  font-size: 14px;
+	  font-weight: bold;
+	  color: #333;
+	  margin-bottom: 3px;
+	}
+	.history-result-score {
+	  font-size: 12px;
+	  color: #ff6b35;
+	}
+	.empty-history {
+	  text-align: center;
+	  padding: 60px 20px;
+	  color: #999;
+	  font-size: 14px;
 	}
 
-	/* 视频播放器样式 */
-	.video-player {
-	  width: 100%;
-	  height: 100%;
-	  object-fit: cover;
+	.modal-overlay {
+	  position: fixed;
+	  top: 0; left: 0;
+	  width: 100%; height: 100%;
+	  background-color: rgba(0, 0, 0, 0.5);
+	  z-index: 2000;
+	  display: none;
+	  align-items: center;
+	  justify-content: center;
+	}
+	.modal-overlay.active {
+	  display: flex;
 	}
 
-	/* 隐藏音量控制（根据需要调整） */
-	.video-player::-webkit-media-controls-volume-slider,
-	.video-player::-webkit-media-controls-mute-button,
-	.video-player::-webkit-media-controls-volume-control-container {
-	  display: none !important;
+	.rectangle-modal {
+	  background-color: white;
+	  border-radius: 16px;
+	  width: 90%;
+	  max-width: 320px;
+	  min-height: 250px;
+	  position: relative;
+	  animation: rectangleModalSlideIn 0.3s ease-out;
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  padding: 30px 20px 20px;
+	  max-height: 80vh;
+	  overflow-y: auto;
+	}
+	@keyframes rectangleModalSlideIn {
+	  from {
+		opacity: 0;
+		transform: scale(0.8) translateY(-20px);
+	  }
+	  to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	  }
+	}
+
+	.rectangle-modal-title {
+	  font-size: 18px;
+	  font-weight: bold;
+	  color: #333;
+	  margin-bottom: 20px;
+	  text-align: center;
+	}
+	.rectangle-modal-options {
+	  display: flex;
+	  flex-direction: column;
+	  gap: 12px;
+	  width: 100%;
+	}
+	.rectangle-modal-option {
+	  padding: 12px 20px;
+	  background-color: #f5f5f5;
+	  border: none;
+	  border-radius: 8px;
+	  font-size: 14px;
+	  color: #333;
+	  cursor: pointer;
+	  transition: all 0.2s;
+	  text-align: center;
+	}
+	.rectangle-modal-option:hover {
+	  background-color: #2196F3;
+	  color: white;
+	  transform: translateY(-1px);
+	}
+	.rectangle-modal-close {
+	  position: absolute;
+	  top: 15px; right: 15px;
+	  background: none; border: none;
+	  font-size: 20px;
+	  color: #999;
+	  cursor: pointer;
+	  width: 25px; height: 25px;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  border-radius: 50%;
+	  transition: all 0.2s;
+	}
+	.rectangle-modal-close:hover {
+	  background-color: #f5f5f5;
+	  color: #333;
+	}
+
+	.bottom-nav {
+	  position: fixed;
+	  bottom: 0; left: 0;
+	  width: 100%;
+	  height: var(--nav-height);
+	  background-color: #fff;
+	  border-top: 1px solid #e5e5e5;
+	  display: flex;
+	  justify-content: space-around;
+	  align-items: center;
+	  z-index: 200;
+	  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+	}
+	.nav-item {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  flex: 1;
+	  height: 100%;
+	  text-decoration: none;
+	  color: var(--text-secondary);
+	  transition: color 0.3s;
+	  position: relative;
+	}
+	.nav-item.active {
+	  color: var(--primary-color);
+	}
+	.nav-item:hover {
+	  color: var(--primary-color);
+	}
+	.nav-icon-img {
+	  width: var(--nav-icon-size);
+	  height: var(--nav-icon-size);
+	  object-fit: contain;
+	  margin-bottom: 2px;
+	}
+	.nav-text {
+	  font-size: var(--nav-text-size);
+	  font-weight: normal;
+	  line-height: 1;
 	}
   </style>
 </head>
 <body>
-  <!-- 进入图片 -->
-  <img id="enterImage" class="enter-image" src="进入图片.jpg" alt="进入图片">
+  <div class="search-section">
+	<div class="search-container">
+	  <div class="search-icon-area"></div>
+	  <input type="text" id="searchInput" class="search-box" placeholder="搜索软件名称">
+	  <div class="search-actions">
+		<span id="searchText" class="search-text">搜索</span>
+	  </div>
+	</div>
+	<button id="historyBtn" class="history-btn"></button>
+	<button id="cancelBtn" class="cancel-btn" style="display: none;">取消</button>
+  </div>
 
-  <!-- 视频播放器 -->
-  <video id="mainVideo" 
-		 class="video-player"
-		 src="进入视频.mp4" 
-		 autoplay 
-		 muted 
-		 loop="false"
-		 playsinline
-		 webkit-playsinline>
-	  您的浏览器不支持视频播放。
-	</video>
+  <div id="softwareList" class="software-list"></div>
+
+  <div id="searchResultPage" class="search-result-page">
+	<div class="search-result-header">
+	  <div class="search-result-input-wrapper">
+		<div class="search-result-icon-area"></div>
+		<input type="text" id="searchResultInput" class="search-result-input" placeholder="搜索软件名称">
+		<div class="search-result-actions">
+		  <span class="search-text">搜索</span>
+		</div>
+	  </div>
+	  <button id="resultCancelBtn" class="cancel-btn">取消</button>
+	</div>
+	<div id="resultSoftwareList" class="software-list"></div>
+  </div>
+
+  <div id="historyPage" class="history-page">
+	<div class="history-header">
+	  <button id="backBtn" class="back-btn">←</button>
+	  <div class="history-title">历史记录</div>
+	</div>
+	<div id="historyContent" class="history-content"></div>
+	</div>
+
+  <div id="rectangleModal" class="modal-overlay">
+	<div class="rectangle-modal">
+	  <button id="rectangleModalClose" class="rectangle-modal-close">×</button>
+	  <h3 id="rectangleModalTitle" class="rectangle-modal-title"></h3>
+	  <div id="rectangleModalOptions" class="rectangle-modal-options"></div>
+	</div>
+  </div>
+
+  <!-- 底部导航 -->
+  <div class="bottom-nav" id="bottomNav"></div>
 
   <script>
-	// 获取元素
-	const enterImage = document.getElementById('enterImage');
-	const mainVideo = document.getElementById('mainVideo');
+	/*********************** 多语言核心功能（隐藏切换按钮） *************************/
+	let isEnglishMode = false;
+	
+	// 保存语言设置状态
+	function saveLanguageState(isEnglish) {
+		localStorage.setItem('isEnglish', isEnglish.toString());
+	}
 
-	// 页面加载完成后执行
-	window.addEventListener('load', function () {
-	  // 0.5秒（500毫秒）后隐藏进入图片
-	  setTimeout(function() {
-		enterImage.style.display = 'none';
+	function getLanguageState() {
+		return localStorage.getItem('isEnglish') === 'true';
+	}
+
+	// 检测浏览器语言
+	function detectBrowserLanguage() {
+		const lang = navigator.language || navigator.userLanguage;
+		return lang.startsWith('en') || lang.startsWith('EN');
+	}
+
+	// 翻译文本（中英对照翻译）
+	function translateText(text, targetLang = 'en') {
+		// 如果已经是英文且目标语言是英文，直接返回
+		if (targetLang === 'en' && /^[a-zA-Z\s]+$/.test(text.trim())) {
+			return text;
+		}
 		
-		// 显示视频并开始播放
-		mainVideo.style.display = 'block';
-		mainVideo.play().catch(function (error) {
-		  console.log('视频播放被阻止:', error);
+		// 中英翻译对照
+		const translations = {
+			// 界面文本
+			"搜索软件名称": "Search software name",
+			"搜索": "Search",
+			"取消": "Cancel",
+			"历史记录": "History",
+			"没有找到相关软件": "No software found",
+			"下载": "Download",
+			"暂无下载": "No download",
+			"请选择下载方式：": "Please choose download method:",
+			"暂无搜索历史": "No search history",
+			"所有软件已在上方显示完毕": "All software displayed above",
+			"搜索：": "Search:",
+			"主页": "Home",
+			"爱发电": "Afdian",
+			"我的": "Profile",
+			"植物大战僵尸2官方版": "Plants vs. Zombies 2 Official Version",
+			"植物大战僵尸2时空再旅1.0.4": "Plants vs. Zombies 2 Time Travel 1.0.4",
+			"植物大战僵尸2Ark版": "Plants vs. Zombies 2 Ark Version",
+			"植物大战僵尸2衍生版": "Plants vs. Zombies 2 Derivative Version",
+			"植物大战僵尸2国际版（汉化+恢复拓展+恢复音乐）": "Plants vs. Zombies 2 International Version (Chinese + Expansion + Music)",
+			"植物大战僵尸2返茂版（PvZ 2: Reflourished）": "Plants vs. Zombies 2 Reflourished",
+			"Team Sparks Il PvZ2 Modders（需要魔法）": "Team Sparks Il PvZ2 Modders (Need VPN)",
+			"植物大战僵尸2：迷宫回响": "Plants vs. Zombies 2: Maze Echo",
+			"植物大战僵尸2：迷宫拓展版": "Plants vs. Zombies 2: Maze Expansion",
+			"小马宝莉大战僵尸5": "My Little Pony vs Zombies 5",
+			"植物大战僵尸2天空之城内购破解": "Plants vs. Zombies 2 Sky City Cracked",
+			"植物大战僵尸无尽版内购破解": "Plants vs. Zombies Endless Edition Cracked",
+			"植物大战僵尸全明星qwq版": "Plants vs. Zombies All Stars qwq Version",
+			"Plants vs Zombies：Brave New World": "Plants vs Zombies：Brave New World",
+			"植物大战僵尸：乐Pad版": "Plants vs. Zombies: LePad Version",
+			"8.7分  原汁原味的中文官方版本": "8.7/10 - Authentic Chinese official version",
+			"8.8分  作者：想不出名字、Mz工作室": "8.8/10 - Author: Can't think of a name, Mz Studio",
+			"8.7分  作者：今霄是飘逸的利己主义者": "8.7/10 - Author: Tonight is an elegant egoist",
+			"7.8分  作者：东北雨姐的粉丝": "7.8/10 - Author: Fan of Northeast Yujie",
+			"9.0分  作者：特别的伊将军 版本12.7.1": "9.0/10 - Author: Special General Yi, Version 12.7.1",
+			"8.9分  总作者：PvZABFan＆PeaMix": "8.9/10 - Authors: PvZABFan & PeaMix",
+			"8分 一个由画师和模组作者组成的团队，致力于创建、动画和编写素材，供模组社区免费使用!": "8/10 - A team of artists and modders creating animations and materials for free use!",
+			"7.9分  一款不错的迷宫改版，内含丰富的游戏内容！": "7.9/10 - A good maze modification with rich content!",
+			"8.1分  完成度很的迷宫改版，拥有妙趣横生的游戏体验！": "8.1/10 - High-quality maze modification with fun gameplay!",
+			"8.6分  小马宝莉大战僵尸的第五部，小马大战僵尸收官之作！": "8.6/10 - My Little Pony vs Zombies 5, the final installment!",
+			"7.9分  经典迷宫版v1.6.1内购破解版！无须花钱即可获取资源 此版本纯琨曲！": "7.9/10 - Classic maze v1.6.1 cracked version! Get resources for free!",
+			"7.7分  经典一代官方版本内购破解，包含西游、龙宫、长城三大内容！": "7.7/10 - Classic version 1 cracked with Journey to the West content!",
+			"8.5分  经典全明星版本的改版！内涵丰富内容和无与伦比的新奇体验": "8.5/10 - Classic All Stars modification with rich content!",
+			"8.8分  目前仅支持电脑端游玩，加入群聊在群文件中下载游戏包": "8.8/10 - PC only, join group to download game package",
+			"6.8分 在一众一代版本中，此版本十分高清！对高版本系统的适配也是一流的。": "6.8/10 - High definition version with excellent system compatibility!",
+			"加入官方代理社区！": "Join official community!",
+			"加入QQ5群": "Join QQ Group 5",
+			"加入QQ3群": "Join QQ Group 3",
+			"加入QQ2群": "Join QQ Group 2",
+			"加入QQ4群": "Join QQ Group 4",
+			"加入Discord！（需要您会魔法）": "Join Discord! (Need VPN)",
+			"加入官方Discord社区！": "Join official Discord community!",
+			"加入Discord": "Join Discord",
+			"加入官方群！在群内获取游戏资源": "Join official group! Get game resources in group",
+			"加入QQ交流群获取": "Join QQ group to get",
+			"加入官方QQ群！下载最新游戏资源": "Join official QQ group! Download latest game resources",
+			"查看群简介，加入拓展QQ官方群": "Check group intro, join expansion QQ group",
+			"使用onedrive在线下载（需要魔法）": "Download via onedrive (Need VPN)",
+			"经多年守卫控住僵尸，但小马谷已成废墟。星光熠熠决定穿越到第一天剿灭僵尸，重启时空扭转残局！": "After years of defending, Ponyville is in ruins. Starlight Glimmer travels back to day one to save the day!",
+			"加入QQ官方群获取": "Join QQ official group to get",
+			"在线123云盘下载": "Download via 123 cloud drive",
+			"该版本较为远古，内购破解会闪退，但可正常到账。高系统手机启动时小概率闪退，但第三次必定进入。": "Older version, cracked features may crash but work. High system phones may crash but work on third try.",
+			"云盘下载": "Cloud drive download",
+			"版本相对于原版没有花园、解谜元素，但是在关卡中会出现灌木丛。而对比移动端的其他版本，这个版本的特点在于支持1280x800分辨率画面。且对于PAD的适配更好！": "No garden/puzzle elements, but has bushes. Supports 1280x800 resolution, better for PAD!",
+			"《植物大战僵尸：美丽新世界》重拾系列经典玩法。开放更多的自定义插件项目，带来无与伦比的体验。玩家将再度开启跨时空冒险，收集并运用植物，全力抵御僵尸浪潮的入侵，重温原味塔防体验。": "\"Plants vs. Zombies: Brave New World\" revives classic gameplay with more customization. Players adventure through time to defend against zombies!",
+			"点击加群获取": "Click to join group to get",
+			"获取": "Get",
+			"前往": "Go"
+		};
+		
+		// 如果有对应的翻译则返回翻译，否则使用原文本
+		return translations[text] || text;
+	}
+
+	// 检测语言状态（但不提供切换按钮）
+	function checkLanguageState() {
+		const savedIsEnglish = getLanguageState();
+		
+		// 如果没有保存的状态，使用浏览器语言检测
+		if (savedIsEnglish === null) {
+			isEnglishMode = detectBrowserLanguage();
+		} else {
+			isEnglishMode = savedIsEnglish;
+		}
+	}
+
+	// 创建翻译后的软件数据
+	function getTranslatedSoftwareData() {
+		if (!isEnglishMode) return originalSoftwareData;
+		
+		// 深度复制并翻译文本字段
+		const translatedData = JSON.parse(JSON.stringify(originalSoftwareData));
+		
+		translatedData.forEach(item => {
+			// 翻译名称和评分
+			item.name = translateText(item.name);
+			item.score = translateText(item.score);
+			
+			// 翻译下载文本
+			if (item.downloadText) {
+				item.downloadText = translateText(item.downloadText);
+			}
+			
+			// 翻译弹窗内容
+			if (item.popup) {
+				item.popup.text = translateText(item.popup.text);
+				if (item.popup.downloads) {
+					item.popup.downloads.forEach(download => {
+						// 不翻译url字段
+						if (download.text) {
+							download.text = translateText(download.text);
+						}
+					});
+				}
+			}
+			
+			// downloadUrl、image字段保持不变（不翻译）
 		});
-
-		// 7.5秒后自动跳转到 indexhome.html（从页面加载开始计算）
-		setTimeout(function() {
-		  window.location.href = 'indexhome.html';
-		}, 7000); // 7500 - 500 = 7000，因为已经用了0.5秒显示图片
 		
-	  }, 500); // 0.5秒后隐藏进入图片
+		return translatedData;
+	}
+
+	/*********************** 可配置的底部导航 *************************/
+	const NAV_CONFIG = [
+	  { icon: 'home.png', text: { zh: '主页', en: 'Home' }, link: 'index.html', active: true },
+	  { icon: 'author.png', text: { zh: '爱发电', en: 'Afdian' }, link: 'index2.html' },
+	  { icon: 'my.png', text: { zh: '我的', en: 'Profile' }, link: 'index3.html' }
+	];
+
+	function renderBottomNav() {
+	  const nav = document.getElementById('bottomNav');
+	  if (!nav) return;
+	  
+	  nav.innerHTML = NAV_CONFIG.map(item => {
+		// 根据当前语言模式显示对应文本
+		const text = isEnglishMode ? item.text.en : item.text.zh;
+		const activeClass = item.active ? 'active' : '';
+		return `
+		  <a href="${item.link}" class="nav-item ${activeClass}" data-page="${text}">
+			<img src="img/${item.icon}" class="nav-icon-img" alt="${text}">
+			<div class="nav-text">${text}</div>
+		  </a>`;
+	  }).join('');
+
+	  nav.querySelectorAll('.nav-item').forEach(el => {
+		el.addEventListener('click', function(e) {
+		  const curr = location.pathname.split('/').pop() || 'index.html';
+		  const targetText = this.dataset.page;
+		  const pageMap = {};
+		  NAV_CONFIG.forEach(n => {
+			// 根据当前语言模式映射页面
+			const textKey = isEnglishMode ? 'en' : 'zh';
+			pageMap[n.text[textKey]] = n.link.split('/').pop();
+		  });
+		  
+		  if (curr === pageMap[targetText]) {
+			e.preventDefault();
+			return false;
+		  }
+		  nav.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+		  this.classList.add('active');
+		});
+	  });
+
+	  const current = location.pathname.split('/').pop() || 'index.html';
+	  nav.querySelectorAll('.nav-item').forEach(el => {
+		const targetText = el.dataset.page;
+		const pageMap = {};
+		NAV_CONFIG.forEach(n => {
+		  const textKey = isEnglishMode ? 'en' : 'zh';
+		  pageMap[n.text[textKey]] = n.link.split('/').pop();
+		});
+		el.classList.toggle('active', current === pageMap[targetText]);
+	  });
+	}
+
+	/*********************** 软件数据与翻译处理 *************************/
+	const originalSoftwareData = [
+	  {
+		rank: 1,
+		name: "植物大战僵尸2官方版",
+		score: "8.7分  原汁原味的中文官方版本",
+		downloadUrl: "https://pvz2apk-cdn.ditwan.cn/1730/baokai_3.9.0_1730_381_dj2.0-3.0.0.apk",
+		image: "植物大战僵尸2.jpg"
+	  },
+	  {
+		rank: 1,
+		name: "植物大战僵尸2时空再旅1.0.4",
+		score: "8.8分  作者：想不出名字、Mz工作室",
+		downloadUrl: "时空再旅.html",
+		image: "植物大战僵尸2时空再旅.jpg"
+	  },
+	  {
+		rank: 1,
+		name: "植物大战僵尸2Ark版",
+		score: "8.7分  作者：今霄是飘逸的利己主义者",
+		downloadUrl: "https://www.123684.com/s/zWgIjv-XcA8",
+		image: "植物大战僵尸2ark.jpg"
+	  },
+	  {
+		rank: 1,
+		name: "植物大战僵尸2衍生版",
+		score: "7.8分  作者：东北雨姐的粉丝",
+		downloadUrl: "https://www.123684.com/s/zWgIjv-ncA8",
+		image: "植物大战僵尸2衍生.jpg"
+	  },
+	  {
+		rank: 1,
+		name: "植物大战僵尸2国际版（汉化+恢复拓展+恢复音乐）",
+		score: "9.0分  作者：特别的伊将军 版本12.7.1",
+		downloadUrl: "http://www.123865.com/s/Xpv9-ndDxh",
+		image: "植物大战僵尸2国际版汉化.jpg"
+	  },
+	  {
+		rank: 1,
+		name: "植物大战僵尸2返茂版（PvZ 2: Reflourished）",
+		score: "8.9分  总作者：PvZABFan＆PeaMix",
+		downloadUrl: "",
+		image: "植物大战僵尸2返茂.jpg",
+		downloadText: "获取",
+		popup: {
+		  text: "加入官方代理社区！",
+		  downloads: [
+			{ url: "https://qun.qq.com/universal-share/share?ac=1&authKey=Q%2B0UlGy20lQ3QZK0EerwxmGB1bAObqvRIf2bS3er9hre5FlCc1QqmsMteMM28Ict&busi_data=eyJncm91cENvZGUiOiI3Mjg5MTI1OTAiLCJ0b2tlbiI6InJIZnRKeDBRTzA2RytIOHhLRkJGMVFVb2dNODJrU2U4Vmxjc01aeWNsQkZ5bTdEVThJZytsRmhkVEdYNDNrcDciLCJ1aW4iOiIzNjQyNzk4NTAxIn0=&data=g0g3S977SBHDZA3bmqCEcm8N0-Xqpkj1OaEXnbAIQLpkR-k6YJ5klqoAHnSPPuqRuBZ-iw4DRs1VUp7RWF5z08gEiPig6LaFxd-CV2lMdvs&svctype=5&tempid=h5_group_info", text: "加入QQ5群" },
+			{ url: "https://qun.qq.com/universal-share/share?ac=1&authKey=NmdtopylzCH3nLWwJA2wk9H254Wokda/gPlatCmvddF%2Bp9S2jo5s5E8IraQLanpl&busi_data=eyJncm91cENvZGUiOiI5MzExMTA5ODIiLCJ0b2tlbiI6Ik40TEQzQmJycDNYVVVwRHMzSVlQRlBCWm9oamJUS01UME1GdTV1VlJjcUlkVlVER3Vwb2xiQ204dVVwK0txWVkiLCJ1aW4iOiIzNjQyNzk4NTAxIn0=&data=VkL34vGAhrxyF1eRUjQOMyHE5GHPE4Xv_OP-7LtaOV5r1Vk3ikzaik78ZgjMj9SOc7jbVctCKgQXNYiJQopv1M7gu_C8DlU9UgDsMwNhysw&svctype=5&tempid=h5_group_info", text: "加入QQ3群" },
+			{ url: "https://qun.qq.com/universal-share/share?ac=1&authKey=lzXZ6HoGY45kdTvb0Nor65sGZMp/CmymA%2BvID75AFF9elpR4H7MTeJkQMWi%2BI2St&busi_data=eyJncm91cENvZGUiOiI2NjA5NTg5MzciLCJ0b2tlbiI6ImJwOUg0QWFmL2l0RE9LUFpLcENmbkRoT2UzNUFDUVgvS3dBb1R5eVlQbHhjSmorbktCdkxDdXRJandMcEorclAiLCJ1aW4iOiIzNjQyNzk4NTAxIn0=&data=w31o7ZlGSKFgFFZnxlQLXJpwbTWgofOkOFHoiNghDKGwhqtZ5RUbHwVXgUET4W8OIq-uTTJ9Q2mgeUucwH2mtB9pXh1dODJZqRwK4jqiVPQ&svctype=5&tempid=h5_group_info", text: "加入QQ2群" },
+			{ url: "https://qun.qq.com/universal-share/share?ac=1&authKey=ikzndDW%2BIZ9sDmXioQS6wUD9n5ZOhtpfFtCCeB0Xg5eAIu4UYotsz1wcWVZSfHZt&busi_data=eyJncm91cENvZGUiOiI2OTY5ODI0OTUiLCJ0b2tlbiI6Im5UVDIraURyYnI5cW9ibjBZZVZvdVpzbE1hQkpkaWF3QThoRkFWRXBVNm1lSUhxelRmZExyemdKdnloV3lkSFoiLCJ1aW4iOiIzNjQyNzk4NTAxIn0=&data=J9sfWOoc7EvNXYx95rO6lqOUxHDLkHtpZTyVmK_2F3CcPhdSUA49dS2oe4Ws4KFjDo8nbfeL0HZ8E7-GoA-L7yDclR-8-tc6rvk4BStmQq4&svctype=5&tempid=h5_group_info", text: "加入QQ4群" },
+			{ url: "https://discord.gg/ba9rC7Qdkb", text: "加入Discord！（需要您会魔法）" }
+		  ]
+		}
+	  },
+	  {
+		rank: 1,
+		name: "Team Sparks Il PvZ2 Modders（需要魔法）",
+		score: "8分 一个由画师和模组作者组成的团队，致力于创建、动画和编写素材，供模组社区免费使用!",
+		downloadUrl: "https://discord.gg/fAuHJNRM2y",
+		image: "TeamSpark.jpg",
+		downloadText: "前往",
+		popup: {
+		  text: "加入官方Discord社区！",
+		  downloads: [
+			{ url: "https://discord.gg/fAuHJNRM2y", text: "加入Discord" }
+		  ]
+		}
+	  },
+	  {
+		rank: 1,
+		name: "植物大战僵尸2：迷宫回响",
+		score: "7.9分  一款不错的迷宫改版，内含丰富的游戏内容！",
+		downloadUrl: "",
+		image: "植物大战僵尸2迷宫回响.jpg",
+		downloadText: "前往",
+		popup: {
+		  text: "加入官方群！在群内获取游戏资源",
+		  downloads: [
+			{
+			  url: "https://qun.qq.com/universal-share/share?ac=1&authKey=cvrccBe19rE5c9UGSdpw7ZphWwWT1GHHlThgDodYXqVkSyDgW9FQP%2BKKWYii1rVk&busi_data=eyJncm91cENvZGUiOiI4MzIyODcwOTgiLCJ0b2tlbiI6Im1Xb3ZwMWI5dEVlbkxaL2pzQllkaC9JWS9lbGJ6M1hsaGkyK2VqVndReXFBQy9RVHBPUVlId2NDbVNTRlFlTEciLCJ1aW4iOiIxMzIyMDMzNTkyIn0=&data=oi3-XRWXuYVNGnErhbB3YMpemyq_gnifJmv3NtJNXfPxB3riOG97HAeXzQBiEobSQaMNPjGzKHgUjG1Hu0StcV3D9gw3VD2QsMXZMow3iUM&svctype=5&tempid=h5_group_info",
+			  text: "加入QQ交流群获取"
+			}
+		  ]
+		}
+	  },
+	  {
+		rank: 1,
+		name: "植物大战僵尸2：迷宫拓展版",
+		score: "8.1分  完成度很的迷宫改版，拥有妙趣横生的游戏体验！",
+		downloadUrl: "",
+		image: "植物大战僵尸2迷宫拓展.jpg",
+		downloadText: "前往",
+		popup: {
+		  text: "加入官方QQ群！下载最新游戏资源",
+		  downloads: [
+			{
+			  url: "https://qun.qq.com/universal-share/share?ac=1&authKey=4CX14sTwi007tFiMdmoY8%2BdRZ9MPsDJ0gKuxL850OQw6xP6KVOQvnmGCQM/vp%2B4g&busi_data=eyJncm91cENvZGUiOiIxMDQ0OTMyNjM2IiwidG9rZW4iOiJLSDU3Z2padlhlMVFaR2lScjJCM3FkVGMxN1NTM2NtWHl3bkNXRGlpbUxRMVZLUktxcHlJbEFpV2dZRzJpMCtpIiwidWluIjoiMjAxOTk0NzA4NSJ9&data=yf5Zly7jOcjnvn1SGtouhSK2YIFKTngQnOP17PrbdFKVQ6HM0r_QR8oYjYJNJEblDLZm_Q91KN4cuTVxFk-FNUSrUSfTT7nPJWx-YLAwvQ8&svctype=5&tempid=h5_group_info",
+			  text: "查看群简介，加入拓展QQ官方群"
+			},
+			{
+			  url: "https://1drv.ms/f/c/ca303ad2d43918b2/ErIYOdTSOjAggMqpAAAAAAABaYJBklXNYVebE24ZXcG_yQ",
+			  text: "使用onedrive在线下载（需要魔法）"
+			}
+		  ]
+		}
+	  },
+	  {
+		rank: 1,
+		name: "小马宝莉大战僵尸5",
+		score: "8.6分  小马宝莉大战僵尸的第五部，小马大战僵尸收官之作！",
+		downloadUrl: "",
+		image: "植物大战僵尸2小马.jpg",
+		downloadText: "前往",
+		popup: {
+		  text: "经多年守卫控住僵尸，但小马谷已成废墟。星光熠熠决定穿越到第一天剿灭僵尸，重启时空扭转残局！",
+		  downloads: [
+			{
+			  url: "https://qun.qq.com/universal-share/share?ac=1&authKey=ICKWdXFQqBR%2BaHrB9/JPygRkqF6DEspJxwRCDW/D74YpMuDTGYQfhaPWiU8sOKmu&busi_data=eyJncm91cENvZGUiOiI1NDc2NTgyOTUiLCJ0b2tlbiI6ImZHSUpDT09Zc2tmYWt2aXRHY0ZDZy9hMW5ibFBFd1VpRnFkWWlQR0dxTzRCZ1k5aE1CSE5zS2pGQW1GT2huTCsiLCJ1aW4iOiIyMDE5OTQ3MDg1In0=&data=ZbIpXGFKVTxPpzZ6cgQI-1O9cD5gWFfsfbf4cNwmOUJIA1Hy9D-UzcjY135YMCmtzfBl4RIulZJJbU5AIseRT8cIvcvCgWXIS0aFTmLLago&svctype=5&tempid=h5_group_info",
+			  text: "加入QQ官方群获取"
+			},
+			{
+			  url: "https://www.123684.com/s/zWgIjv-tcA8",
+			  text: "在线123云盘下载"
+			}
+		  ]
+		}
+	  },
+	  {
+		rank: 1,
+		name: "植物大战僵尸2天空之城内购破解",
+		score: "7.9分  经典迷宫版v1.6.1内购破解版！无须花钱即可获取资源 此版本纯琨曲！",
+		downloadUrl: "https://www.123684.com/s/zWgIjv-VcA8",
+		image: "植物大战僵尸2天空之城.jpg"
+	  },
+	  {
+		rank: 1,
+		name: "植物大战僵尸无尽版内购破解",
+		score: "7.7分  经典一代官方版本内购破解，包含西游、龙宫、长城三大内容！",
+		downloadUrl: "https://www.123684.com/s/zWgIjv-VcA8",
+		image: "植物大战僵尸无尽版.jpg",
+		popup: {
+		  text: "该版本较为远古，内购破解会闪退，但可正常到账。高系统手机启动时小概率闪退，但第三次必定进入。",
+		  downloads: [
+			{
+			  url: "https://www.123684.com/s/zWgIjv-deA8",
+			  text: "云盘下载"
+			}
+		  ]
+		}
+	  },
+	  {
+		rank: 1,
+		name: "植物大战僵尸全明星qwq版",
+		score: "8.5分  经典全明星版本的改版！内涵丰富内容和无与伦比的新奇体验",
+		downloadUrl: "",
+		image: "植物大战僵尸全明星qwq.jpg",
+		downloadText: "前往",
+		popup: {
+		  text: "加入官方群！在群内获取游戏资源",
+		  downloads: [
+			{
+			  url: "https://qun.qq.com/universal-share/share?ac=1&authKey=VrThaikUN6pnRjni858gy8f7Dc7VrkJcRHHAgfT6wVFp6l6Q6x2ZUy7pYeaiqK2k&busi_data=eyJncm91cENvZGUiOiIxMDUzMjcwMzA2IiwidG9rZW4iOiJpSHcxWmlaL1d6N0ovU2tKSGVtMXplM2pXZFI1RDlsYWdKYTBzTDBZZGpacy95ZW13MDF1UGVVK0VoNVZIa1ZTIiwidWluIjoiMjAxOTk0NzA4NSJ9&data=_U9WSDDR7BNvN6vDUl-XmJCqSen9uSB2caP3hsd34DiAb6547Uu7ZxlAFXaFobAnkeeTggnrreyN_6ZU46IZsTtk1sRnumBcbAIcYr9UCLo&svctype=5&tempid=h5_group_info",
+			  text: "加入QQ交流群获取"
+			}
+		  ]
+		}
+	  },
+	  {
+		rank: 1,
+		name: "Plants vs Zombies：Brave New World",
+		score: "8.8分  目前仅支持电脑端游玩，加入群聊在群文件中下载游戏包",
+		downloadUrl: "",
+		image: "PlantsvsZombies：BraveNewWorld.jpg",
+		downloadText: "前往",
+		popup: {
+		  text: "《植物大战僵尸：美丽新世界》重拾系列经典玩法。开放更多的自定义插件项目，带来无与伦比的体验。玩家将再度开启跨时空冒险，收集并运用植物，全力抵御僵尸浪潮的入侵，重温原味塔防体验。",
+		  downloads: [
+			{
+			  url: "https://qun.qq.com/universal-share/share?ac=1&authKey=Kc5oaRXj%2Byj5JFQBXIb6%2BahpROq501Hkc37JlZJV39e5LRpkLK6T7f7nCs%2BLB6VX&busi_data=eyJncm91cENvZGUiOiI5NDU4MzkyNzUiLCJ0b2tlbiI6ImcxMFBXTjlEdHpwS2tFV0pwWWFsVjdVSXhqT291VDlwSFk2THBCMGJGQWZ3VnBIYlNrN0hUdm01Tk50ZjlNQVIiLCJ1aW4iOiIyMDE5OTQ3MDg1In0%3D&data=nRCXpJvEAtbQCGSi49sXjuGj_uFc1dwXcLyMfNpqV72DHD68TxSqnQi4LQB2US8s7cINSag_xnr0VPPc27gEJNtEQXQfVGMeoQGGdX5auEg&svctype=5&tempid=h5_group_info",
+			  text: "点击加群获取"
+			}
+		  ]
+		}
+	  },
+	  {
+		rank: 1,
+		name: "植物大战僵尸：乐Pad版",
+		score: "6.8分 在一众一代版本中，此版本十分高清！对高版本系统的适配也是一流的。",
+		downloadUrl: "",
+		image: "植物大战僵尸乐pad版.jpg",
+		downloadText: "前往",
+		popup: {
+		  text: "版本相对于原版没有花园、解谜元素，但是在关卡中会出现灌木丛。而对比移动端的其他版本，这个版本的特点在于支持1280x800分辨率画面。且对于PAD的适配更好！",
+		  downloads: [
+			{
+			  url: "https://www.123684.com/s/zWgIjv-xeA8",
+			  text: "云盘下载"
+			}
+		  ]
+		}
+	  }
+	];
+
+	// 获取翻译后的软件数据
+	let translatedSoftwareData = [];
+	
+	// 排序后的软件数据
+	let sortedSoftware = [];
+
+	const searchInput = document.getElementById('searchInput');
+	const searchResultInput = document.getElementById('searchResultInput');
+	const softwareListEl = document.getElementById('softwareList');
+	const resultSoftwareListEl = document.getElementById('resultSoftwareList');
+	const searchResultPage = document.getElementById('searchResultPage');
+	const searchText = document.getElementById('searchText');
+	const resultSearchText = document.querySelector('.search-result-actions .search-text');
+	const historyBtn = document.getElementById('historyBtn');
+	const cancelBtn = document.getElementById('cancelBtn');
+	const resultCancelBtn = document.getElementById('resultCancelBtn');
+	const historyPage = document.getElementById('historyPage');
+	const backBtn = document.getElementById('backBtn');
+	const historyContent = document.getElementById('historyContent');
+	const rectangleModal = document.getElementById('rectangleModal');
+	const rectangleModalTitle = document.getElementById('rectangleModalTitle');
+	const rectangleModalOptions = document.getElementById('rectangleModalOptions');
+	const rectangleModalClose = document.getElementById('rectangleModalClose');
+
+	let searchHistory = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+
+	function renderSoftwareList(softwareToShow, container = softwareListEl) {
+	  if (!softwareToShow.length) {
+		const noResultsText = isEnglishMode ? 'No software found' : '没有找到相关软件';
+		container.innerHTML = `<div class="no-results">${noResultsText}</div>`;
+		return;
+	  }
+	  
+	  const listHTML = softwareToShow.map(item => {
+		const btnText = item.downloadText || (isEnglishMode ? 'Download' : '下载');
+		let btnHtml = '';
+		if (item.popup) {
+		  btnHtml = `<button class="download-btn-main" onclick="showPopup('${item.name}')">${btnText}</button>`;
+		} else if (item.downloadUrl && item.downloadUrl.trim() !== '' && item.downloadUrl !== '无') {
+		  const isHtml = item.downloadUrl.endsWith('.html');
+		  if (isHtml) {
+			btnHtml = `<a href="${item.downloadUrl}" class="download-btn-main" target="_blank">${btnText}</a>`;
+		  } else {
+			btnHtml = `<a href="${item.downloadUrl}" class="download-btn-main" target="_blank">${btnText}</a>`;
+		  }
+		} else {
+		  const noDownloadText = isEnglishMode ? 'No download' : '暂无下载';
+		  btnHtml = `<span class="download-btn-main" disabled>${noDownloadText}</span>`;
+		}
+		return `
+		<div class="software-item">
+		  <img src="${item.image}" class="software-img" alt="${item.name}">
+		  <div class="software-info">
+			<div class="software-name">${item.name}</div>
+			<div class="software-score">${item.score}</div>
+		  </div>
+		  ${btnHtml}
+		</div>`;
+	  }).join('');
+	  container.innerHTML = listHTML;
+	}
+
+	function showPopup(name) {
+	  // 查找原始名称或翻译名称
+	  const item = translatedSoftwareData.find(s => s.name === name) || 
+					originalSoftwareData.find(s => translateText(s.name) === name);
+	  
+	  if (!item || !item.popup) return;
+	  
+	  rectangleModalTitle.textContent = item.name;
+	  rectangleModalOptions.innerHTML = '';
+	  
+	  const desc = document.createElement('div');
+	  desc.style.cssText = 'font-size:14px;color:#666;line-height:1.5;margin-bottom:20px;text-align:center;padding:0 10px;';
+	  desc.textContent = item.popup.text;
+	  rectangleModalOptions.appendChild(desc);
+	  
+	  const divider = document.createElement('div');
+	  divider.style.cssText = 'width:100%;height:1px;background:#e5e5e5;margin-bottom:15px;';
+	  rectangleModalOptions.appendChild(divider);
+	  
+	  const titleOpt = document.createElement('div');
+	  titleOpt.style.cssText = 'font-size:14px;font-weight:bold;color:#333;margin-bottom:12px;text-align:center;';
+	  titleOpt.textContent = isEnglishMode ? 'Please choose download method:' : '请选择下载方式：';
+	  rectangleModalOptions.appendChild(titleOpt);
+	  
+	  item.popup.downloads.forEach(opt => {
+		const btn = document.createElement('button');
+		btn.className = 'rectangle-modal-option';
+		btn.textContent = opt.text;
+		btn.onclick = () => { 
+			if (opt.url && opt.url !== '链接1' && opt.url !== '链接2' && opt.url !== '链接3' && opt.url !== '链接4') {
+				window.open(opt.url, '_blank'); 
+			}
+			hideRectangleModal(); 
+		};
+		rectangleModalOptions.appendChild(btn);
+	  });
+	  
+	  rectangleModal.classList.add('active');
+	}
+
+	function hideRectangleModal() {
+	  rectangleModal.classList.remove('active');
+	}
+
+	function saveSearchHistory(kw) {
+	  if (!kw.trim()) return;
+	  searchHistory = searchHistory.filter(h => h.keyword !== kw);
+	  searchHistory.unshift({ keyword: kw, timestamp: Date.now() });
+	  if (searchHistory.length > 10) searchHistory = searchHistory.slice(0, 10);
+	  localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+	}
+
+	function performSearch(kw, container = resultSoftwareListEl) {
+	  if (!kw.trim()) {
+		renderSoftwareList(sortedSoftware, container);
+		return;
+	  }
+	  
+	  saveSearchHistory(kw);
+	  
+	  // 同时搜索中英文
+	  const filtered = translatedSoftwareData.filter(s => 
+		s.name.toLowerCase().includes(kw.toLowerCase()) || 
+		originalSoftwareData.find(orig => orig.name.toLowerCase().includes(kw.toLowerCase()) && translateText(orig.name) === s.name)
+	  );
+	  
+	  renderSoftwareList(filtered, container);
+	}
+
+	function showSearchResultPage() {
+	  searchResultPage.classList.add('active');
+	  searchResultInput.value = searchInput.value;
+	  searchResultInput.focus();
+	}
+
+	function hideSearchResultPage() {
+	  searchResultPage.classList.remove('active');
+	  searchInput.value = '';
+	  searchResultInput.value = '';
+	}
+
+	function renderHistoryPage() {
+	  if (!searchHistory.length) {
+		const emptyText = isEnglishMode ? 'No search history' : '暂无搜索历史';
+		historyContent.innerHTML = `<div class="empty-history">${emptyText}</div>`;
+		return;
+	  }
+	  
+	  const shown = new Set();
+	  let html = '';
+	  
+	  searchHistory.forEach(hist => {
+		const results = translatedSoftwareData.filter(s => 
+		  s.name.toLowerCase().includes(hist.keyword.toLowerCase()) && 
+		  !shown.has(s.name)
+		).slice(0, 2);
+		
+		if (!results.length) return;
+		
+		results.forEach(r => shown.add(r.name));
+		
+		const resHtml = results.map(r => {
+		  const link = r.downloadUrl && r.downloadUrl.trim() && r.downloadUrl !== '无' ? (r.downloadUrl.endsWith('.html') ? r.downloadUrl : r.downloadUrl) : '#';
+		  const disabled = (!link || link === '#') ? 'disabled' : '';
+		  const downloadText = isEnglishMode ? 'Download' : '下载';
+		  
+		  return `
+		  <div class="history-result-item">
+			<img src="${r.image}" class="history-result-img" alt="${r.name}">
+			<div class="history-result-info">
+			  <div class="history-result-name">${r.name}</div>
+			  <div class="history-result-score">${r.score}</div>
+			</div>
+			<a href="${link}" class="download-btn-main" target="_blank" ${disabled} style="padding:6px 12px;font-size:12px;">${downloadText}</a>
+		  </div>`;
+		}).join('');
+		
+		const searchLabel = isEnglishMode ? 'Search:' : '搜索：';
+		html += `
+		<div class="history-search-item">
+		  <div class="history-search-header">
+			<div class="history-search-keyword">${searchLabel}<strong>"${hist.keyword}"</strong></div>
+			<button class="history-search-btn" onclick="quickSearch('${hist.keyword}')">${isEnglishMode ? 'Search' : '搜索'}</button>
+		  </div>
+		  <div class="history-search-results">${resHtml}</div>
+		</div>`;
+	  });
+	  
+	  if (!html) {
+		const allShownText = isEnglishMode ? 'All software displayed above' : '所有软件已在上方显示完毕';
+		html = `<div class="empty-history">${allShownText}</div>`;
+	  }
+	  
+	  historyContent.innerHTML = html;
+	}
+
+	function quickSearch(kw) {
+	  historyPage.classList.remove('active');
+	  searchInput.value = kw;
+	  searchResultInput.value = kw;
+	  performSearch(kw, resultSoftwareListEl);
+	  showSearchResultPage();
+	  searchResultInput.focus();
+	}
+
+	// 初始化语言状态（自动检测但不显示切换按钮）
+	function initLanguageState() {
+		checkLanguageState();
+		translatedSoftwareData = getTranslatedSoftwareData();
+		sortedSoftware = [...translatedSoftwareData].sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
+		updatePageText();
+		renderBottomNav();
+	}
+
+	// 更新页面文本（根据当前语言模式）
+	function updatePageText() {
+		// 更新占位符
+		document.getElementById('searchInput').placeholder = isEnglishMode ? 'Search software name' : '搜索软件名称';
+		document.getElementById('searchResultInput').placeholder = isEnglishMode ? 'Search software name' : '搜索软件名称';
+		
+		// 更新按钮文本
+		document.getElementById('searchText').textContent = isEnglishMode ? 'Search' : '搜索';
+		document.querySelector('.search-result-actions .search-text').textContent = isEnglishMode ? 'Search' : '搜索';
+		document.getElementById('cancelBtn').textContent = isEnglishMode ? 'Cancel' : '取消';
+		document.getElementById('resultCancelBtn').textContent = isEnglishMode ? 'Cancel' : '取消';
+		document.querySelector('.history-title').textContent = isEnglishMode ? 'History' : '历史记录';
+		
+		// 更新页面标题
+		document.title = isEnglishMode ? 'Software Search & Download' : '软件搜索下载';
+	}
+
+	// 初始化
+	function init() {
+		initLanguageState();
+		renderSoftwareList(sortedSoftware);
+	}
+
+	// 初始化
+	init();
+
+	// 搜索框事件
+	searchInput.addEventListener('focus', () => {
+	  showSearchResultPage();
+	  cancelBtn.style.display = 'block';
+	  historyBtn.style.display = 'none';
+	});
+	searchText.addEventListener('click', () => {
+	  const kw = searchInput.value.trim();
+	  if (kw) performSearch(kw, softwareListEl);
+	});
+	resultSearchText.addEventListener('click', () => {
+	  const kw = searchResultInput.value.trim();
+	  if (kw) performSearch(kw, resultSoftwareListEl);
+	});
+	cancelBtn.addEventListener('click', () => {
+	  hideSearchResultPage();
+	  cancelBtn.style.display = 'none';
+	  historyBtn.style.display = 'block';
+	});
+	resultCancelBtn.addEventListener('click', () => {
+	  hideSearchResultPage();
+	  cancelBtn.style.display = 'none';
+	  historyBtn.style.display = 'block';
+	});
+	historyBtn.addEventListener('click', () => {
+	  renderHistoryPage();
+	  historyPage.classList.add('active');
+	});
+	backBtn.addEventListener('click', () => historyPage.classList.remove('active'));
+
+	[searchResultInput, searchInput].forEach(inp => {
+	  inp.addEventListener('keypress', e => {
+		if (e.key === 'Enter') {
+		  const kw = inp.value.trim();
+		  if (inp.id === 'searchResultInput') performSearch(kw, resultSoftwareListEl);
+		  else if (kw) performSearch(kw, softwareListEl);
+		}
+	  });
+	  inp.addEventListener('input', () => {
+		const other = inp.id === 'searchInput' ? searchResultInput : searchInput;
+		other.value = inp.value;
+	  });
 	});
 
-	// 处理视频播放结束事件
-	mainVideo.addEventListener('ended', function() {
-	  // 如果视频播放完毕，也跳转到 indexhome.html
-	  window.location.href = 'indexhome.html';
+	rectangleModalClose.addEventListener('click', hideRectangleModal);
+	rectangleModal.addEventListener('click', e => {
+	  if (e.target === rectangleModal) hideRectangleModal();
 	});
+	
+	// 全局函数暴露给window
+	window.showPopup = showPopup;
+	window.quickSearch = quickSearch;
   </script>
 </body>
 </html>

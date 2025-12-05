@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>电力红茶的个人空间</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>软件搜索下载</title>
 	<style>
 		* {
 			margin: 0;
@@ -12,26 +12,12 @@
 		}
 
 		body {
-			background: #f5f5f5;
 			font-family: Arial, sans-serif;
-			height: 100vh;
-			display: flex;
-			flex-direction: column;
-			padding-bottom: 60px;
-		}
-
-		/* 主内容区域 - 嵌入B站页面 */
-		.main-content {
-			flex: 1;
-			position: relative;
-			overflow: hidden;
-			background: white;
-		}
-
-		.bilibili-frame {
-			width: 100%;
-			height: 100%;
-			border: none;
+			background-color: #f5f5f5;
+			padding: 0;
+			touch-action: pan-x pan-y;
+			overflow-x: hidden;
+			padding-bottom: 60px; /* 为底部导航预留空间 */
 		}
 
 		/* 防止页面缩放 */
@@ -42,7 +28,15 @@
 			text-size-adjust: none;
 		}
 
-		/* 底部导航栏样式 - 参考您提供的样式 */
+		/* 核心修改：AFDian网页嵌入容器 */
+		.afdian-container {
+			width: 100%;
+			height: calc(100vh - 60px); /* 占满除底部导航外的全部高度 */
+			border: none;
+			overflow: auto; /* 允许内部滚动 */
+		}
+
+		/* 底部导航栏（保留原有样式） */
 		.bottom-nav {
 			position: fixed;
 			bottom: 0;
@@ -55,7 +49,6 @@
 			justify-content: space-around;
 			align-items: center;
 			z-index: 200;
-			box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
 		}
 
 		.nav-item {
@@ -68,24 +61,10 @@
 			text-decoration: none;
 			color: #999;
 			transition: color 0.3s;
-			position: relative;
-			border: none;
-			background: none;
-			cursor: pointer;
-			font-family: inherit;
 		}
 
 		.nav-item.active {
 			color: #4CAF50;
-		}
-
-		.nav-item:hover {
-			color: #4CAF50;
-		}
-
-		.nav-item.center:hover {
-			color: #999;
-			cursor: not-allowed;
 		}
 
 		.nav-icon {
@@ -93,185 +72,129 @@
 			height: 24px;
 			margin-bottom: 4px;
 			font-size: 20px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
+		}
+
+		.nav-icon img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
 		}
 
 		.nav-text {
 			font-size: 12px;
-			font-weight: normal;
 		}
 
-		/* 简单的图标样式 */
-		.icon-home::before {
-			content: "🏠";
-		}
-
-		.icon-author::before {
-			content: "📄";
-		}
-
-		.icon-profile::before {
-			content: "👤";
-		}
-
-		/* 响应式设计 */
-		@media (max-width: 768px) {
-			.nav-text {
-				font-size: 11px;
-			}
-			
-			.nav-icon {
-				font-size: 18px;
-			}
-		}
-
-		@media (max-width: 480px) {
-			.nav-text {
-				font-size: 10px;
-			}
-			
-			.nav-icon {
-				font-size: 16px;
-			}
-			
-			.bottom-nav {
-				height: 55px;
-			}
-			
-			body {
-				padding-bottom: 55px;
-			}
-		}
-
-		/* 加载提示 */
-		.loading-hint {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			text-align: center;
-			color: #666;
-			z-index: 10;
-		}
-
-		.loading-hint h2 {
-			margin-bottom: 10px;
-			font-size: 18px;
-		}
-
-		.loading-hint p {
-			font-size: 14px;
-			margin-bottom: 20px;
-		}
-
-		.fallback-link {
-			display: inline-block;
-			padding: 10px 20px;
-			background: #007bff;
-			color: white;
-			text-decoration: none;
-			border-radius: 5px;
-			transition: background 0.3s;
-		}
-
-		.fallback-link:hover {
-			background: #0056b3;
+		/* 保留必要的弹窗样式（不影响主功能） */
+		.wechat-notification, .copy-success-modal, .modal-overlay, .terms-overlay, .loading-overlay, .nav-safe-indicator {
+			display: none !important;
 		}
 	</style>
 </head>
 <body>
-	<!-- 主内容区域 -->
-	<div class="main-content">
-		<iframe 
-			src="https://b23.tv/pbWxHtb" 
-			class="bilibili-frame" 
-			allowfullscreen>
-			<!-- 如果iframe加载失败，显示备用内容 -->
-			<div class="loading-hint">
-				<h2>页面加载中...</h2>
-				<p>B站页面正在加载</p>
-				<a href="https://b23.tv/pbWxHtb" class="fallback-link" target="_blank">
-					在新窗口打开链接
-				</a>
-			</div>
-		</iframe>
-	</div>
+	<!-- 核心修改：嵌入AFDian网页 -->
+	<iframe class="afdian-container" src="https://afdian.com/a/DLHC1145" allowfullscreen></iframe>
 
-	<!-- 底部导航栏 - 参考您提供的样式 -->
-	<div class="bottom-nav">
-		<button class="nav-item active" onclick="goToHome()">
-			<div class="nav-icon icon-home"></div>
-			<div class="nav-text">主页</div>
-		</button>
-		<button class="nav-item center" onclick="noAction()">
-			<div class="nav-icon icon-author"></div>
-			<div class="nav-text">作者</div>
-		</button>
-		<a href="index3.html" class="nav-item" onclick="setActiveProfile(event)">
-			<div class="nav-icon icon-profile"></div>
-			<div class="nav-text">我的</div>
-		</a>
+	<!-- 底部导航栏 - 动态生成（保留原有逻辑） -->
+	<div class="bottom-nav" id="bottomNav">
+		<!-- 导航项将通过JavaScript动态生成 -->
 	</div>
 
 	<script>
-		// 主页按钮点击事件
-		function goToHome() {
-			// 更新活跃状态
-			document.querySelectorAll('.nav-item').forEach(item => {
-				item.classList.remove('active');
-			});
-			event.currentTarget.classList.add('active');
+		/*********************** 可配置的底部导航 *************************/
+		const NAV_CONFIG = [
+		  { 
+			icon: 'home.png', 
+			text: { zh: '主页', en: 'Home' }, 
+			link: 'indexhome.html', 
+			active: true 
+		  },
+		  { 
+			icon: 'author.png', 
+			text: { zh: '爱发电', en: 'Author' }, 
+			link: 'index2.html' 
+		  },
+		  { 
+			icon: 'my.png', 
+			text: { zh: '我的', en: 'Profile' }, 
+			link: 'index3.html' 
+		  }
+		];
+
+		// 多语言相关变量（保留以支持导航文本切换）
+		let isEnglishMode = false;
+		
+		// 保存/读取语言设置
+		function saveLanguageState(isEnglish) {
+			localStorage.setItem('isEnglish', isEnglish.toString());
+		}
+
+		function getLanguageState() {
+			return localStorage.getItem('isEnglish') === 'true';
+		}
+
+		// 根据语言获取导航链接
+		function getNavLinkPath(configItem) {
+			return isEnglishMode ? configItem.link : configItem.link;
+		}
+
+		// 生成底部导航HTML
+		function generateBottomNav() {
+			const bottomNav = document.getElementById('bottomNav');
+			let navHTML = '';
 			
-			window.location.href = 'indexhome.html';
-		}
-
-		// 作者按钮点击事件（无反应）
-		function noAction() {
-			// 不执行任何操作，保持当前状态
-			console.log('作者按钮被点击，但无反应');
-		}
-
-		// 我的按钮点击事件 - 设置活跃状态
-		function setActiveProfile(event) {
-			document.querySelectorAll('.nav-item').forEach(item => {
-				item.classList.remove('active');
-			});
-			event.currentTarget.classList.add('active');
-		}
-
-		// 防止iframe加载失败
-		document.querySelector('.bilibili-frame').onerror = function() {
-			this.style.display = 'none';
-			document.querySelector('.main-content').innerHTML = `
-				<div class="loading-hint">
-					<h2>页面加载失败</h2>
-					<p>B站页面无法正常显示</p>
-					<a href="https://b23.tv/pbWxHtb" class="fallback-link" target="_blank">
-						在新窗口打开链接
+			NAV_CONFIG.forEach((item, index) => {
+				const isActive = item.active ? 'active' : '';
+				const text = isEnglishMode ? item.text.en : item.text.zh;
+				const link = getNavLinkPath(item);
+				
+				navHTML += `
+					<a href="${link}" class="nav-item ${isActive}" onclick="handleNavigation(${index}, event)">
+						<div class="nav-icon">
+							<img src="img/${item.icon}" alt="${text}" onerror="this.style.display='none'; this.parentNode.innerHTML='📁'; this.parentNode.style.fontSize='20px'; this.parentNode.style.display='flex'; this.parentNode.style.alignItems='center'; this.parentNode.style.justifyContent='center';">
+						</div>
+						<div class="nav-text">${text}</div>
 					</a>
-				</div>
-			`;
-		};
-
-		// 页面加载完成后的处理
-		window.onload = function() {
-			// 根据当前页面设置活跃状态
-			const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-			
-			// 重置所有活跃状态
-			document.querySelectorAll('.nav-item').forEach(item => {
-				item.classList.remove('active');
+				`;
 			});
 			
-			// 设置对应页面的活跃状态
-			if (currentPage === 'index.html') {
-				document.querySelector('.nav-item:first-child').classList.add('active');
-			} else if (currentPage === 'index3.html') {
-				document.querySelector('.nav-item:last-child').classList.add('active');
-			}
-		};
+			bottomNav.innerHTML = navHTML;
+		}
+
+		// 导航处理函数
+		function handleNavigation(index, event) {
+			if (event) event.preventDefault();
+			const configItem = NAV_CONFIG[index];
+			const targetPage = getNavLinkPath(configItem);
+			window.location.href = targetPage;
+			updateNavigationState(index);
+		}
+
+		// 更新导航激活状态
+		function updateNavigationState(activeIndex) {
+			const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+			navItems.forEach((item, index) => {
+				index === activeIndex ? item.classList.add('active') : item.classList.remove('active');
+			});
+		}
+
+		// 切换语言（保留以支持导航文本切换）
+		function toggleLanguage() {
+			isEnglishMode = !isEnglishMode;
+			saveLanguageState(isEnglishMode);
+			generateBottomNav();
+		}
+
+		// 检查语言状态并初始化导航
+		function checkLanguageState() {
+			isEnglishMode = getLanguageState();
+			generateBottomNav();
+		}
+
+		// 初始化
+		document.addEventListener('DOMContentLoaded', function() {
+			checkLanguageState();
+			console.log('AFDian页面已加载，底部导航初始化完成');
+		});
 	</script>
 </body>
 </html>
