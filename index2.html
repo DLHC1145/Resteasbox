@@ -5,139 +5,41 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<title>软件搜索下载</title>
 	<style>
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
-
-		body {
-			font-family: Arial, sans-serif;
-			background-color: #f5f5f5;
-			padding: 0;
-			touch-action: pan-x pan-y;
-			overflow-x: hidden;
-			padding-bottom: 60px; /* 为底部导航预留空间 */
-		}
-
-		/* 防止页面缩放 */
-		html {
-			touch-action: manipulation;
-			-webkit-text-size-adjust: none;
-			-ms-text-size-adjust: none;
-			text-size-adjust: none;
-		}
-
-		/* 核心修改：AFDian网页嵌入容器 */
-		.afdian-container {
-			width: 100%;
-			height: calc(100vh - 60px); /* 占满除底部导航外的全部高度 */
-			border: none;
-			overflow: auto; /* 允许内部滚动 */
-		}
-
-		/* 底部导航栏（保留原有样式） */
-		.bottom-nav {
-			position: fixed;
-			bottom: 0;
-			left: 0;
-			width: 100%;
-			height: 60px;
-			background-color: #fff;
-			border-top: 1px solid #e5e5e5;
-			display: flex;
-			justify-content: space-around;
-			align-items: center;
-			z-index: 200;
-		}
-
-		.nav-item {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			flex: 1;
-			height: 100%;
-			text-decoration: none;
-			color: #999;
-			transition: color 0.3s;
-		}
-
-		.nav-item.active {
-			color: #4CAF50;
-		}
-
-		.nav-icon {
-			width: 24px;
-			height: 24px;
-			margin-bottom: 4px;
-			font-size: 20px;
-		}
-
-		.nav-icon img {
-			width: 100%;
-			height: 100%;
-			object-fit: contain;
-		}
-
-		.nav-text {
-			font-size: 12px;
-		}
-
-		/* 保留必要的弹窗样式（不影响主功能） */
-		.wechat-notification, .copy-success-modal, .modal-overlay, .terms-overlay, .loading-overlay, .nav-safe-indicator {
-			display: none !important;
-		}
+		*{margin:0;padding:0;box-sizing:border-box}
+		body{font-family:Arial,sans-serif;background:#f5f5f5;padding-bottom:60px}
+		html{touch-action:manipulation;-webkit-text-size-adjust:none}
+		.container{background:white;width:320px;height:280px;border-radius:15px;display:flex;flex-direction:column;justify-content:center;align-items:center;box-shadow:0 3px 8px rgba(0,0,0,0.15);padding:25px;margin:40px auto}
+		.title{font-size:26px;color:black;margin-bottom:15px;font-weight:bold}
+		.description{font-size:14px;color:#666;line-height:1.4;margin-bottom:25px}
+		.sponsor-button{background:#007BFF;color:white;border:none;padding:10px 20px;font-size:14px;cursor:pointer;border-radius:6px;text-decoration:none;display:inline-block}
+		.sponsor-button:hover{background:#0056b3}
+		.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:60px;background:#fff;border-top:1px solid #e5e5e5;display:flex;justify-content:space-around;align-items:center;z-index:200}
+		.nav-item{flex:1;height:100%;text-decoration:none;color:#999;transition:color 0.3s;display:flex;flex-direction:column;align-items:center;justify-content:center}
+		.nav-item.active{color:#4CAF50}
+		.nav-icon{width:24px;height:24px;margin-bottom:4px;font-size:20px}
+		.nav-icon img{width:100%;height:100%;object-fit:contain}
+		.nav-text{font-size:12px}
+		.wechat-notification,.copy-success-modal,.modal-overlay,.terms-overlay,.loading-overlay,.nav-safe-indicator{display:none!important}
 	</style>
 </head>
 <body>
-	<!-- 核心修改：嵌入AFDian网页 -->
-	<iframe class="afdian-container" src="https://afdian.com/a/DLHC1145" allowfullscreen></iframe>
-
-	<!-- 底部导航栏 - 动态生成（保留原有逻辑） -->
-	<div class="bottom-nav" id="bottomNav">
-		<!-- 导航项将通过JavaScript动态生成 -->
+	<div class="container">
+		<h1 class="title">我们正在加工！</h1>
+		<p class="description">我们需要筹集资金以承担论坛的费用，<br/>希望您能支持我们！<br/>或者可以先试试其他功能~</p>
+		<a href="https://afdian.com/a/DLHC1145" target="_blank" class="sponsor-button">爱发电赞助</a>
 	</div>
 
+	<div id="bottomNav" class="bottom-nav"></div>
+
 	<script>
-		/*********************** 可配置的底部导航 *************************/
 		const NAV_CONFIG = [
-		  { 
-			icon: 'home.png', 
-			text: { zh: '主页', en: 'Home' }, 
-			link: 'indexhome.html', 
-			active: true 
-		  },
-		  { 
-			icon: 'author.png', 
-			text: { zh: '爱发电', en: 'Author' }, 
-			link: 'index2.html' 
-		  },
-		  { 
-			icon: 'my.png', 
-			text: { zh: '我的', en: 'Profile' }, 
-			link: 'index3.html' 
-		  }
+		  { icon: 'home.png', text: { zh: '主页', en: 'Home' }, link: 'indexhome.html', active: true },
+		  { icon: 'author.png', text: { zh: '论坛', en: 'forum' }, link: 'index2.html' },
+		  { icon: 'my.png', text: { zh: '我的', en: 'Profile' }, link: 'index3.html' }
 		];
 
-		// 多语言相关变量（保留以支持导航文本切换）
-		let isEnglishMode = false;
-		
-		// 保存/读取语言设置
-		function saveLanguageState(isEnglish) {
-			localStorage.setItem('isEnglish', isEnglish.toString());
-		}
+		let isEnglishMode = localStorage.getItem('isEnglish') === 'true';
 
-		function getLanguageState() {
-			return localStorage.getItem('isEnglish') === 'true';
-		}
-
-		// 根据语言获取导航链接
-		function getNavLinkPath(configItem) {
-			return isEnglishMode ? configItem.link : configItem.link;
-		}
-
-		// 生成底部导航HTML
 		function generateBottomNav() {
 			const bottomNav = document.getElementById('bottomNav');
 			let navHTML = '';
@@ -145,56 +47,41 @@
 			NAV_CONFIG.forEach((item, index) => {
 				const isActive = item.active ? 'active' : '';
 				const text = isEnglishMode ? item.text.en : item.text.zh;
-				const link = getNavLinkPath(item);
+				const link = item.link;
 				
-				navHTML += `
-					<a href="${link}" class="nav-item ${isActive}" onclick="handleNavigation(${index}, event)">
-						<div class="nav-icon">
-							<img src="img/${item.icon}" alt="${text}" onerror="this.style.display='none'; this.parentNode.innerHTML='📁'; this.parentNode.style.fontSize='20px'; this.parentNode.style.display='flex'; this.parentNode.style.alignItems='center'; this.parentNode.style.justifyContent='center';">
-						</div>
-						<div class="nav-text">${text}</div>
-					</a>
-				`;
+				navHTML += `<a href="${link}" class="nav-item ${isActive}" onclick="handleNavigation(${index}, event)">
+					<div class="nav-icon"><img src="${item.icon}" alt="${text}" onerror="this.style.display='none'; this.parentNode.innerHTML='📁'; this.parentNode.style.fontSize='20px'; this.parentNode.style.display='flex'; this.parentNode.style.alignItems='center'; this.parentNode.style.justifyContent='center';"></div>
+					<div class="nav-text">${text}</div>
+				</a>`;
 			});
 			
 			bottomNav.innerHTML = navHTML;
 		}
 
-		// 导航处理函数
 		function handleNavigation(index, event) {
-			if (event) event.preventDefault();
-			const configItem = NAV_CONFIG[index];
-			const targetPage = getNavLinkPath(configItem);
-			window.location.href = targetPage;
+			if(event) event.preventDefault();
+			window.location.href = NAV_CONFIG[index].link;
 			updateNavigationState(index);
 		}
 
-		// 更新导航激活状态
 		function updateNavigationState(activeIndex) {
-			const navItems = document.querySelectorAll('.bottom-nav .nav-item');
-			navItems.forEach((item, index) => {
-				index === activeIndex ? item.classList.add('active') : item.classList.remove('active');
+			document.querySelectorAll('.nav-item').forEach((item, index) => {
+				item.classList.toggle('active', index === activeIndex);
 			});
 		}
 
-		// 切换语言（保留以支持导航文本切换）
 		function toggleLanguage() {
 			isEnglishMode = !isEnglishMode;
-			saveLanguageState(isEnglishMode);
+			localStorage.setItem('isEnglish', isEnglishMode.toString());
 			generateBottomNav();
 		}
 
-		// 检查语言状态并初始化导航
 		function checkLanguageState() {
-			isEnglishMode = getLanguageState();
+			isEnglishMode = localStorage.getItem('isEnglish') === 'true';
 			generateBottomNav();
 		}
 
-		// 初始化
-		document.addEventListener('DOMContentLoaded', function() {
-			checkLanguageState();
-			console.log('AFDian页面已加载，底部导航初始化完成');
-		});
+		document.addEventListener('DOMContentLoaded', checkLanguageState);
 	</script>
 </body>
 </html>

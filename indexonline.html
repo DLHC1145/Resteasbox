@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>软件搜索下载</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f5f5f5;
+			padding: 0;
+			touch-action: pan-x pan-y;
+			overflow-x: hidden;
+			min-height: 100vh;
+			position: relative;
+			/* 禁止页面整体滚动，避免导航栏跟随晃动 */
+			overflow: hidden;
+		}
+
+		html {
+			touch-action: manipulation;
+			-webkit-text-size-adjust: none;
+			-ms-text-size-adjust: none;
+			text-size-adjust: none;
+		}
+
+		/* 核心优化：iframe 容器固定高度，内部独立滚动 */
+		.afdian-container {
+			width: 100%;
+			height: 100vh;
+			border: none;
+			overflow: auto; /* 仅iframe内部滚动，不影响页面整体 */
+			display: block;
+			position: relative;
+			z-index: 1;
+			/* 避免iframe加载时的布局偏移 */
+			min-height: calc(100vh - 60px);
+		}
+
+		/* 导航栏锁定优化：提前渲染+最高层级+硬件加速 */
+		.bottom-nav {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 60px;
+			background-color: #fff;
+			border-top: 1px solid #e5e5e5;
+			display: flex;
+			justify-content: space-around;
+			align-items: center;
+			z-index: 9999;
+			pointer-events: auto;
+			/* 硬件加速，防止闪烁 */
+			transform: translateZ(0);
+			-webkit-transform: translateZ(0);
+			/* 禁止导航栏自身滚动或晃动 */
+			overflow: hidden;
+			/* 提前渲染，避免加载延迟 */
+			opacity: 1 !important;
+			visibility: visible !important;
+		}
+
+		.nav-item {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			flex: 1;
+			height: 100%;
+			text-decoration: none;
+			color: #999;
+			transition: color 0.3s;
+			pointer-events: auto;
+			/* 防止导航项被挤压或闪烁 */
+			white-space: nowrap;
+		}
+
+		.nav-item.active {
+			color: #4CAF50;
+		}
+
+		.nav-icon {
+			width: 24px;
+			height: 24px;
+			margin-bottom: 4px;
+			font-size: 20px;
+			/* 图标容器固定大小，避免加载时变形 */
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.nav-icon img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+			/* 图标加载过渡，减少闪烁 */
+			transition: opacity 0.3s;
+		}
+
+		.nav-text {
+			font-size: 12px;
+			/* 文本抗锯齿，提升显示稳定性 */
+			-webkit-font-smoothing: antialiased;
+		}
+
+		/* 隐藏所有干扰元素，避免布局波动 */
+		.wechat-notification, .copy-success-modal, .modal-overlay, .terms-overlay, .loading-overlay, .nav-safe-indicator {
+			display: none !important;
+		}
+	</style>
+</head>
+<body>
+	<!-- 提前渲染导航栏，放在iframe之前，确保优先加载 -->
+	<div class="bottom-nav" id="bottomNav">
+		<!-- 导航项提前写死基础结构，JS仅更新内容，减少渲染延迟 -->
+		<a href="indexhome.html" class="nav-item active" onclick="handleNavigation(0, event)">
+			<div class="nav-icon">📁</div>
+			<div class="nav-text">主页</div>
+		</a>
+		<a href="index2.html" class="nav-item" onclick="handleNavigation(1, event)">
+			<div class="nav-icon">📁</div>
+			<div class="nav-text">爱发电</div>
+		</a>
+		<a href="index3.html" class="nav-item" onclick="handleNavigation(2, event)">
+			<div class="nav-icon">📁</div>
+			<div class="nav-text">我的</div>
+		</a>
+	</div>
+
+	<!-- iframe 放在导航栏之后，避免层级冲突 -->
+	<iframe class="afdian-container" src="https://dlhc1145.github.io/PvZMagicBox" allowfullscreen></iframe>
+
+	<script>
+		const NAV_CONFIG = [
+		  { 
+			icon: 'home.png', 
+			text: { zh: '主页', en: 'Home' }, 
+			link: 'indexhome.html', 
+			active: true 
+		  },
+		  { 
+			icon: 'author.png', 
+			text: { zh: '爱发电', en: 'Author' }, 
+			link: 'index2.html' 
+		  },
+		  { 
+			icon: 'my.png', 
+			text: { zh: '我的', en: 'Profile' }, 
+			link: 'index3.html' 
+		  }
+		];
+
+		let isEnglishMode = false;
+
+		// 简化语言存储逻辑，减少初始化耗时
+		function getLanguageState() {
+			return localStorage.getItem('isEnglish') === 'true';
+		}
+
+		// 优化导航生成逻辑：仅更新内容，不重构DOM
+		function updateBottomNav() {
+			isEnglishMode = getLanguageState();
+			const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+			
+			NAV_CONFIG.forEach((item, index) => {
+				const navItem = navItems[index];
+				const text = isEnglishMode ? item.text.en : item.text.zh;
+				const iconContainer = navItem.querySelector('.nav-icon');
+				const textContainer = navItem.querySelector('.nav-text');
+				
+				// 更新链接
+				navItem.href = item.link;
+				// 更新文本
+				textContainer.textContent = text;
+				// 更新图标（保留容错处理）
+				const img = document.createElement('img');
+				img.src = `img/${item.icon}`;
+				img.alt = text;
+				img.onerror = function() {
+					this.remove();
+					iconContainer.textContent = '📁';
+				};
+				img.onload = function() {
+					iconContainer.innerHTML = '';
+					iconContainer.appendChild(this);
+				};
+				// 更新激活状态
+				item.active ? navItem.classList.add('active') : navItem.classList.remove('active');
+			});
+		}
+
+		function handleNavigation(index, event) {
+			event.preventDefault();
+			const targetPage = NAV_CONFIG[index].link;
+			// 跳转前先更新激活状态，避免闪烁
+			const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+			navItems.forEach((item, i) => {
+				i === index ? item.classList.add('active') : item.classList.remove('active');
+			});
+			// 延迟跳转，确保状态更新完成
+			setTimeout(() => {
+				window.location.href = targetPage;
+			}, 50);
+		}
+
+		// 页面加载完成后立即更新导航，不等待iframe
+		document.addEventListener('DOMContentLoaded', function() {
+			updateBottomNav();
+			console.log('导航栏已锁定，初始化完成');
+		});
+
+		// 禁止iframe加载时的页面滚动事件冒泡
+		document.querySelector('.afdian-container').addEventListener('scroll', function(e) {
+			e.stopPropagation();
+		});
+	</script>
+</body>
+</html>
