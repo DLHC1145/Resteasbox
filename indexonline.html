@@ -122,15 +122,21 @@
 	<div class="bottom-nav" id="bottomNav">
 		<!-- 导航项提前写死基础结构，JS仅更新内容，减少渲染延迟 -->
 		<a href="indexhome.html" class="nav-item active" onclick="handleNavigation(0, event)">
-			<div class="nav-icon">📁</div>
+			<div class="nav-icon">
+				<img src="home.png" alt="主页">
+			</div>
 			<div class="nav-text">主页</div>
 		</a>
 		<a href="index2.html" class="nav-item" onclick="handleNavigation(1, event)">
-			<div class="nav-icon">📁</div>
-			<div class="nav-text">爱发电</div>
+			<div class="nav-icon">
+				<img src="author.png" alt="论坛">
+			</div>
+			<div class="nav-text">论坛</div>
 		</a>
 		<a href="index3.html" class="nav-item" onclick="handleNavigation(2, event)">
-			<div class="nav-icon">📁</div>
+			<div class="nav-icon">
+				<img src="my.png" alt="我的">
+			</div>
 			<div class="nav-text">我的</div>
 		</a>
 	</div>
@@ -148,7 +154,7 @@
 		  },
 		  { 
 			icon: 'author.png', 
-			text: { zh: '爱发电', en: 'Author' }, 
+			text: { zh: '论坛', en: 'Author' }, 
 			link: 'index2.html' 
 		  },
 		  { 
@@ -180,20 +186,18 @@
 				navItem.href = item.link;
 				// 更新文本
 				textContainer.textContent = text;
-				// 更新图标（保留容错处理）
-				const img = document.createElement('img');
-				img.src = `img/${item.icon}`;
-				img.alt = text;
-				img.onerror = function() {
-					this.remove();
-					iconContainer.textContent = '📁';
-				};
-				img.onload = function() {
-					iconContainer.innerHTML = '';
-					iconContainer.appendChild(this);
-				};
+				// 更新图标（直接从根目录加载）
+				const img = iconContainer.querySelector('img');
+				if (img) {
+					img.src = item.icon; // 直接使用文件名，不加路径
+					img.alt = text;
+				}
 				// 更新激活状态
-				item.active ? navItem.classList.add('active') : navItem.classList.remove('active');
+				if (item.active) {
+					navItem.classList.add('active');
+				} else {
+					navItem.classList.remove('active');
+				}
 			});
 		}
 
