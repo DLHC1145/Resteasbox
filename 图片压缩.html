@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>图片转WebP压缩工具</title>
+  <style>
+	* { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+	body { background: #f5f5f7; color: #1d1d1f; min-height: 100vh; padding: 16px; }
+	h1 { text-align: center; font-size: 22px; margin-bottom: 12px; }
+	.card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); max-width: 600px; margin: 0 auto 16px; }
+	.drop-zone { border: 2px dashed #cbd5e1; border-radius: 8px; padding: 32px; text-align: center; color: #64748b; cursor: pointer; transition: border-color .2s; }
+	.drop-zone.dragover { border-color: #007aff; background: #f0f6ff; }
+	.controls { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; align-items: center; }
+	.controls label { font-size: 14px; }
+	.controls input[type=number], .controls select { padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 14px; width: 100px; }
+	.controls button { background: #007aff; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 14px; cursor: pointer; }
+	.controls button:disabled { background: #94a3b8; cursor: not-allowed; }
+	.preview-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+	.preview-item { display: flex; gap: 12px; align-items: center; background: #f9fafb; border-radius: 8px; padding: 8px; }
+	.thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; background: #e5e7eb; }
+	.info { flex: 1; font-size: 14px; }
+	.filename { font-weight: 600; word-break: break-all; }
+	.meta { color: #64748b; font-size: 12px; margin-top: 2px; }
+	.actions { display: flex; gap: 6px; }
+	.actions a, .actions button { font-size: 12px; padding: 4px 8px; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; }
+	.download { background: #10b981; color: #fff; }
+	.remove { background: #ef4444; color: #fff; }
+	.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1d1d1f; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity .3s; z-index: 2000; }
+	.toast.show { opacity: 1; }
+	.hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h1>图片转 WebP 压缩工具</h1>
+  <div class="card">
+	<div class="drop-zone" id="dropZone">
+	  <div>拖拽图片到此处，或 <strong>点击选择文件</strong></div>
+	  <input type="file" id="fileInput" accept="image/*" multiple class="hidden" />
+	</div>
+	<div class="controls">
+	  <label>最大宽/高：<input type="number" id="maxSize" value="1920" min="320" max="8192" /></label>
+	  <label>质量：<input type="number" id="quality" value="80" min="10" max="100" step="1" /></label>
+	  <label>导出格式：
+		<select id="exportFormat">
+		  <option value="image/webp" selected>WebP</option>
+		  <option value="image/jpeg">JPEG</option>
+		  <option value="image/png">PNG</option>
+		</select>
+	  </label>
+	  <button id="clearBtn" disabled>清空</button>
+	</div>
+	<div class="preview-list" id="previewList"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+	const dropZone = document.getElementById('dropZone');
+	const fileInput = document.getElementById('fileInput');
+	const maxSizeInput = document.getElementById('maxSize');
+	const qualityInput = document.getElementById('quality');
+	const exportFormatSelect = document.getElementById('exportFormat');
+	const previewList = document.getElementById('previewList');
+	const clearBtn = document.getElementById('clearBtn');
+	const toast = document.getElementById('toast');
+
+	let filesData = [];
+
+	function showToast(msg, ms = 2000) {
+	  toast.textContent = msg;
+	  toast.classList.add('show');
+	  setTimeout(() => toast.classList.remove('show'), ms);
+	}
+
+	function formatBytes(b) {
+	  if (b < 1024) return b + ' B';
+	  if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
+	  return (b / 1024 / 1024).toFixed(2) + ' MB';
+	}
+
+	function updateClearBtn() {
+	  clearBtn.disabled = filesData.length === 0;
+	}
+
+	function readerToImage(file) {
+	  return new Promise((resolve) => {
+		const img = new Image();
+		img.onload = () => resolve(img);
+		img.src = URL.createObjectURL(file);
+	  });
+	}
+
+	function canvasFromImage(img, maxW, maxH, mimeType, quality) {
+	  return new Promise((resolve) => {
+		const ratio = Math.min(maxW / img.width, maxH / img.height, 1);
+		const w = Math.round(img.width * ratio);
+		const h = Math.round(img.height * ratio);
+		const canvas = document.createElement('canvas');
+		canvas.width = w;
+		canvas.height = h;
+		const ctx = canvas.getContext('2d');
+		ctx.drawImage(img, 0, 0, w, h);
+		canvas.toBlob(resolve, mimeType, quality);
+	  });
+	}
+
+	async function processFile(file) {
+	  const origSize = file.size;
+	  const img = await readerToImage(file);
+	  const maxSize = Math.max(1, parseInt(maxSizeInput.value, 10) || 1920);
+	  const quality = Math.max(0.1, Math.min(1, parseInt(qualityInput.value, 10) || 80) / 100);
+	  const mimeType = exportFormatSelect.value;
+
+	  // 优先尝试 WebP；若浏览器不支持则回退
+	  let blob = await canvasFromImage(img, maxSize, maxSize, mimeType, quality).catch(() => null);
+	  let usedType = mimeType;
+	  if (!blob && mimeType !== 'image/jpeg') {
+		blob = await canvasFromImage(img, maxSize, maxSize, 'image/jpeg', quality);
+		usedType = 'image/jpeg';
+	  }
+	  if (!blob && mimeType !== 'image/png') {
+		blob = await canvasFromImage(img, maxSize, maxSize, 'image/png');
+		usedType = 'image/png';
+	  }
+	  if (!blob) throw new Error('浏览器不支持所选格式导出');
+
+	  const newSize = blob.size;
+	  const ratio = ((origSize - newSize) / origSize * 100).toFixed(1);
+
+	  const url = URL.createObjectURL(blob);
+	  const ext = usedType.split('/')[1];
+	  const fileName = file.name.replace(/\.[^/.]+$/, '') + '.' + ext;
+
+	  return { fileName, url, origSize, newSize, ratio, type: usedType };
+	}
+
+	function renderItem(data) {
+	  const item = document.createElement('div');
+	  item.className = 'preview-item';
+	  item.innerHTML = `
+		<img class="thumb" src="${data.url}" alt="thumb" />
+		<div class="info">
+		  <div class="filename">${data.fileName}</div>
+		  <div class="meta">
+			原：${formatBytes(data.origSize)} → 新：${formatBytes(data.newSize)}（${data.ratio}%）
+		  </div>
+		</div>
+		<div class="actions">
+		  <a class="download" href="${data.url}" download="${data.fileName}">下载</a>
+		  <button class="remove" type="button">删除</button>
+		</div>
+	  `;
+	  item.querySelector('.remove').onclick = () => {
+		URL.revokeObjectURL(data.url);
+		filesData = filesData.filter(d => d.url !== data.url);
+		item.remove();
+		updateClearBtn();
+	  };
+	  previewList.appendChild(item);
+	}
+
+	async function handleFiles(fileList) {
+	  const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+	  if (!files.length) {
+		showToast('未选择图片文件');
+		return;
+	  }
+	  for (const file of files) {
+		try {
+		  const data = await processFile(file);
+		  filesData.push(data);
+		  renderItem(data);
+		} catch (e) {
+		  showToast('处理失败：' + e.message);
+		}
+	  }
+	  updateClearBtn();
+	}
+
+	dropZone.onclick = () => fileInput.click();
+	fileInput.onchange = () => handleFiles(fileInput.files);
+
+	dropZone.addEventListener('dragover', e => {
+	  e.preventDefault();
+	  dropZone.classList.add('dragover');
+	});
+	dropZone.addEventListener('dragleave', () => {
+	  dropZone.classList.remove('dragover');
+	});
+	dropZone.addEventListener('drop', e => {
+	  e.preventDefault();
+	  dropZone.classList.remove('dragover');
+	  handleFiles(e.dataTransfer.files);
+	});
+
+	clearBtn.onclick = () => {
+	  filesData.forEach(d => URL.revokeObjectURL(d.url));
+	  previewList.innerHTML = '';
+	  filesData = [];
+	  updateClearBtn();
+	  showToast('已清空');
+	};
+  </script>
+</body>
+</html>

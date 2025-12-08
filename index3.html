@@ -379,7 +379,7 @@
 			color: #666;
 		}
 
-		/* 设置页面样式 - 修改后的简洁版本 */
+		/* 设置页面样式 - 精简版 */
 		.settings-page {
 			background-color: #f5f5f5;
 			min-height: 100vh;
@@ -406,7 +406,7 @@
 			z-index: 600;
 		}
 
-		/* 新增：顶部图标区域 */
+		/* 顶部图标区域 */
 		.settings-icon-container {
 			margin: 20px auto;
 			width: 80px;
@@ -423,7 +423,7 @@
 			object-fit: cover;
 		}
 
-		/* 修改后的设置内容区域 */
+		/* 设置内容区域 */
 		.settings-content {
 			background-color: white;
 			border-radius: 10px;
@@ -687,55 +687,6 @@
 			padding: 40px;
 		}
 
-		/* 安全导航指示器 */
-		.nav-safe-indicator {
-			position: fixed;
-			top: 50px;
-			right: 10px;
-			background: rgba(76, 175, 80, 0.9);
-			color: white;
-			padding: 5px 10px;
-			border-radius: 15px;
-			font-size: 12px;
-			z-index: 1000;
-			display: none;
-			animation: pulse 2s infinite;
-		}
-
-		@keyframes pulse {
-			0% { opacity: 0.7; }
-			50% { opacity: 1; }
-			100% { opacity: 0.7; }
-		}
-
-		/* 加载指示器 - 保留但不使用 */
-		.loading-overlay {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: rgba(0, 0, 0, 0.5);
-			z-index: 9999;
-			display: none;
-			justify-content: center;
-			align-items: center;
-		}
-
-		.loading-spinner {
-			width: 50px;
-			height: 50px;
-			border: 5px solid #f3f3f3;
-			border-top: 5px solid #4CAF50;
-			border-radius: 50%;
-			animation: spin 1s linear infinite;
-		}
-
-		@keyframes spin {
-			0% { transform: rotate(0deg); }
-			100% { transform: rotate(360deg); }
-		}
-
 		/* 链接弹窗样式 */
 		.link-modal {
 			background-color: white;
@@ -785,14 +736,6 @@
 	</style>
 </head>
 <body>
-	<!-- 安全导航指示器 -->
-	<div id="navSafeIndicator" class="nav-safe-indicator">安全导航已启用</div>
-
-	<!-- 加载指示器 - 保留但不使用 -->
-	<div id="loadingOverlay" class="loading-overlay">
-		<div class="loading-spinner"></div>
-	</div>
-
 	<!-- 用户信息栏 -->
 	<div class="user-info-bar">
 		<div class="welcome-text" id="welcomeText">欢迎访问</div>
@@ -933,11 +876,11 @@
 				<img src="图标.jpg" alt="应用图标" onerror="this.style.display='none'; this.parentNode.innerHTML='📱'; this.parentNode.style.fontSize='36px'; this.parentNode.style.display='flex'; this.parentNode.style.alignItems='center'; this.parentNode.style.justifyContent='center'">
 			</div>
 			<div class="app-name" data-zh="软件搜索下载" data-en="Software Search Download">软件搜索下载</div>
-			<div class="version-display" id="versionDisplay">版本 1.2</div>
+			<div class="version-display" id="versionDisplay">版本 1.3beta</div>
 		</div>
 	</div>
 
-	<!-- 设置页面 - 修改后的简洁版本 -->
+	<!-- 设置页面 - 精简版 -->
 	<div id="settingsPage" class="settings-page">
 		<!-- 头部 -->
 		<div class="settings-header">
@@ -955,7 +898,7 @@
 		<div class="settings-content">
 			<div class="setting-item">
 				<span class="setting-label" data-zh="应用版本" data-en="App Version">应用版本</span>
-				<span class="setting-value" id="settingsVersionDisplay">1.2</span>
+				<span class="setting-value" id="settingsVersionDisplay">1.3beta</span>
 			</div>
 			<div class="setting-item">
 				<span class="setting-label" data-zh="开发者" data-en="Developer">开发者</span>
@@ -978,20 +921,9 @@
 					</label>
 				</span>
 			</div>
-			<!-- 新增：启用在线应用数据开关 -->
-			<div class="setting-item">
-				<span class="setting-label" data-zh="启用在线数据（最新）" data-en="Enable Online App Data">启用在线应用数据</span>
-				<span class="setting-value">
-					<label class="language-switch">
-						<input type="checkbox" id="onlineDataToggle" onchange="toggleOnlineData()">
-						<span class="slider"></span>
-					</label>
-					<span class="beta-tag">beta</span>
-				</span>
-			</div>
 		</div>
 
-		<!-- 新增：植创魔盒霸王条款阅读 -->
+		<!-- 植创魔盒霸王条款阅读 -->
 		<div class="function-list" style="margin-top: 30px;">
 			<div class="list-item" onclick="showTermsModal()">
 				<div class="list-item-left">
@@ -1024,14 +956,14 @@
 		  }
 		];
 
-		/*********************** 可配置的功能列表 *************************/
+		/*********************** 可配置的功能列表（本地网页跳转核心） *************************/
 		const FUNCTION_LIST_CONFIG = [
 			{
 				id: 'contact',
 				icon: '📞',
 				text: { zh: '联系作者', en: 'Contact Author' },
-				actionType: 'modal', // modal:弹窗 | link:链接 | page:页面 | function:自定义函数
-				actionTarget: 'contactModal', // 对应弹窗ID/链接地址/页面ID/函数名
+				actionType: 'modal', 
+				actionTarget: 'contactModal', 
 				btnText: { zh: '查看', en: 'View' }
 			},
 			{
@@ -1040,8 +972,8 @@
 				text: { zh: '设置', en: 'Settings' },
 				actionType: 'function',
 				actionTarget: 'goToSettings',
-				btnText: { zh: '', en: '' }, // 空则不显示按钮
-				showBtn: false // 控制是否显示按钮
+				btnText: { zh: '', en: '' }, 
+				showBtn: false 
 			},
 			{
 				id: 'about',
@@ -1052,14 +984,14 @@
 				btnText: { zh: '', en: '' },
 				showBtn: false
 			},
-			// 示例：新增链接类型项 - 使用通用弹窗系统
+			// 本地网页跳转示例（核心新增）
 			{
 				id: 'official-site',
 				icon: '❤️‍🔥',
 				text: { zh: '支持作者（爱发电）', en: 'Official Site' },
 				actionType: 'link',
-				actionTarget: 'linkModal', // 弹窗ID
-				linkUrl: 'https://afdian.com/a/DLHC1145', // 实际链接地址
+				actionTarget: 'linkModal', 
+				linkUrl: 'https://afdian.com/a/DLHC1145', 
 				btnText: { zh: '访问', en: 'Visit' }
 			},
 			{
@@ -1067,19 +999,58 @@
 				icon: '🔧',
 				text: { zh: '神秘人工具箱&神秘人主页', en: 'MysteryBox & MysteryHome' },
 				actionType: 'link',
-				actionTarget: 'link1Modal', // 弹窗ID
-				linkUrl: 'https://b23.tv/MNqU5D2', // 实际链接地址
+				actionTarget: 'link1Modal', 
+				linkUrl: 'https://b23.tv/MNqU5D2', 
+				btnText: { zh: '查看', en: 'Visit' }
+			},
+			{
+				id: 'official-site-zip',
+				icon: '📕',
+				text: { zh: '一键转换压缩包格式', en: 'Archive Format Converter' },
+				actionType: 'link',
+				actionTarget: 'link1Modal', 
+				linkUrl: '功能：修改压缩包后缀.html', // 本地网页文件
+				btnText: { zh: '查看', en: 'Visit' }
+			},
+			{
+				id: 'official-site-123',
+				icon: '🔗',
+				text: { zh: '一键转换数值进制', en: 'Convert number base' },
+				actionType: 'link',
+				actionTarget: 'link1Modal', 
+				linkUrl: '数值进制转换.html', // 本地网页文件
+				btnText: { zh: '查看', en: 'Visit' }
+			},
+			{
+				id: 'official-site-unix',
+				icon: '⏱️',
+				text: { zh: '在线获取时间戳', en: 'Get timestamp' },
+				actionType: 'link',
+				actionTarget: 'link1Modal', 
+				linkUrl: '时间戳.html', // 本地网页文件
+				btnText: { zh: '查看', en: 'Visit' }
+			},
+			{
+				id: 'official-site-mp42jpg',
+				icon: '📹',
+				text: { zh: '视频一键抽帧（mp4转jpg）', en: 'One-click video frame extraction (MP4 to JPG)' },
+				actionType: 'link',
+				actionTarget: 'link1Modal', 
+				linkUrl: '视频抽帧.html', // 本地网页文件
+				btnText: { zh: '查看', en: 'Visit' }
+			},
+			{
+				id: 'official-site-**2webp',
+				icon: '📹',
+				text: { zh: '图片压缩（**转webp）', en: 'image compression (** to WEBP)' },
+				actionType: 'link',
+				actionTarget: 'link1Modal', 
+				linkUrl: '图片压缩.html', // 本地网页文件
 				btnText: { zh: '查看', en: 'Visit' }
 			}
 		];
 
-		// 全局状态：在线数据开关
-		let isOnlineDataEnabled = false;
-		// 存储原始函数和修改后的函数
-		let originalFunctions = {};
-
 		/*********************** 通用弹窗管理函数 *************************/
-		// 通用显示弹窗函数
 		function showGenericModal(modalId, title, url) {
 			const modal = document.getElementById(modalId);
 			const baseId = modalId.replace('Modal', '');
@@ -1094,13 +1065,11 @@
 			modal.classList.add('show');
 		}
 
-		// 通用关闭弹窗函数
 		function closeGenericModal(modalId, event) {
 			if (event && event.target !== document.getElementById(modalId)) return;
 			document.getElementById(modalId).classList.remove('show');
 		}
 
-		// 通用复制链接函数
 		function copyGenericLinkFromModal(modalId) {
 			const baseId = modalId.replace('Modal', '');
 			const urlElement = document.getElementById(baseId + 'Url');
@@ -1132,7 +1101,6 @@
 			document.body.removeChild(textArea);
 		}
 
-		// 通用打开链接函数
 		function openGenericLinkFromModal(modalId) {
 			const baseId = modalId.replace('Modal', '');
 			const urlElement = document.getElementById(baseId + 'Url');
@@ -1158,7 +1126,6 @@
 			return configItem.link;
 		}
 
-		// 生成底部导航HTML - 修改图片路径为同目录
 		function generateBottomNav() {
 			const bottomNav = document.getElementById('bottomNav');
 			let navHTML = '';
@@ -1181,7 +1148,6 @@
 			bottomNav.innerHTML = navHTML;
 		}
 
-		// 生成功能列表HTML（配置化）
 		function generateFunctionList() {
 			const container = document.getElementById('functionListContainer');
 			let listHTML = '';
@@ -1189,7 +1155,7 @@
 			FUNCTION_LIST_CONFIG.forEach(item => {
 				const text = isEnglishMode ? item.text.en : item.text.zh;
 				const btnText = isEnglishMode ? item.btnText.en : item.btnText.zh;
-				const showBtn = item.showBtn !== false; // 默认显示按钮
+				const showBtn = item.showBtn !== false; 
 				
 				listHTML += `
 					<div class="list-item" onclick="handleFunctionAction('${item.id}')">
@@ -1205,26 +1171,21 @@
 			container.innerHTML = listHTML;
 		}
 
-		// 处理功能列表点击事件（配置化）
 		function handleFunctionAction(itemId) {
 			const item = FUNCTION_LIST_CONFIG.find(item => item.id === itemId);
 			if (!item) return;
 
 			switch (item.actionType) {
 				case 'modal':
-					// 显示指定弹窗
 					document.getElementById(item.actionTarget).classList.add('show');
 					break;
 				case 'link':
-					// 显示链接弹窗 - 使用通用函数
 					showGenericModal(item.actionTarget, isEnglishMode ? item.text.en : item.text.zh, item.linkUrl);
 					break;
 				case 'page':
-					// 显示指定页面
 					document.getElementById(item.actionTarget).style.display = 'block';
 					break;
 				case 'function':
-					// 执行自定义函数
 					if (typeof window[item.actionTarget] === 'function') {
 						window[item.actionTarget]();
 					}
@@ -1261,192 +1222,6 @@
 				}
 			});
 		}
-/*********************** 在线数据开关相关 *************************/
-let videoCheckPromise = null;
-let lastVideoCheckTime = 0;
-const VIDEO_CHECK_CACHE_TIME = 30000; // 30秒内使用缓存结果
-
-function checkStartupVideoExists() {
-	// 如果已经有正在进行的检查，返回该Promise
-	if (videoCheckPromise) {
-		return videoCheckPromise;
-	}
-	
-	// 检查缓存（避免频繁检查）
-	const now = Date.now();
-	if (now - lastVideoCheckTime < VIDEO_CHECK_CACHE_TIME) {
-		console.log('使用缓存的视频检查结果');
-		return Promise.resolve(false); // 保守策略：缓存期内认为不存在
-	}
-	
-	videoCheckPromise = new Promise((resolve) => {
-		const checkMethods = [
-			// 方法1: HEAD请求（首选）
-			() => {
-				return new Promise((res) => {
-					const xhr = new XMLHttpRequest();
-					xhr.open('HEAD', './进入视频.mp4', true);
-					xhr.onreadystatechange = function() {
-						if (xhr.readyState === 4) {
-							const exists = xhr.status >= 200 && xhr.status < 400;
-							console.log('HEAD方法检查结果:', exists ? '存在' : '不存在', '状态码:', xhr.status);
-							res({exists, method: 'HEAD', status: xhr.status});
-						}
-					};
-					xhr.onerror = () => res({exists: false, method: 'HEAD', error: 'network'});
-					xhr.ontimeout = () => res({exists: false, method: 'HEAD', error: 'timeout'});
-					xhr.timeout = 3000;
-					xhr.send();
-				});
-			},
-			// 方法2: GET请求（备选）
-			() => {
-				return new Promise((res) => {
-					const xhr = new XMLHttpRequest();
-					xhr.open('GET', './进入视频.mp4', true);
-					xhr.responseType = 'blob';
-					xhr.onreadystatechange = function() {
-						if (xhr.readyState === 4) {
-							const exists = xhr.status >= 200 && xhr.status < 400;
-							console.log('GET方法检查结果:', exists ? '存在' : '不存在', '状态码:', xhr.status);
-							// 及时终止响应读取以节省带宽
-							if (exists) {
-								xhr.abort();
-							}
-							res({exists, method: 'GET', status: xhr.status});
-						}
-					};
-					xhr.onerror = () => res({exists: false, method: 'GET', error: 'network'});
-					xhr.ontimeout = () => res({exists: false, method: 'GET', error: 'timeout'});
-					xhr.timeout = 3000;
-					xhr.send();
-				});
-			},
-			// 方法3: 尝试不同路径
-			() => {
-				return new Promise((res) => {
-					const paths = [
-						'./进入视频.mp4',
-						'/进入视频.mp4',
-						'进入视频.mp4',
-						'./videos/进入视频.mp4'
-					];
-					
-					let checked = 0;
-					let found = false;
-					
-					paths.forEach(path => {
-						if (found) return;
-						
-						const xhr = new XMLHttpRequest();
-						xhr.open('HEAD', path, true);
-						xhr.onreadystatechange = function() {
-							if (xhr.readyState === 4 && !found) {
-								if (xhr.status >= 200 && xhr.status < 400) {
-									found = true;
-									console.log(`路径 ${path} 找到视频文件`);
-									res({exists, method: 'PATH_TRY', path: path});
-								}
-							}
-						};
-						xhr.onerror = () => {};
-						xhr.timeout = 1000;
-						xhr.send();
-						
-						checked++;
-						if (checked === paths.length && !found) {
-							res({exists: false, method: 'PATH_TRY', error: 'all_paths_failed'});
-						}
-					});
-				});
-			}
-		];
-		
-		// 依次尝试各种方法
-		const tryNextMethod = (index) => {
-			if (index >= checkMethods.length) {
-				console.error('所有检查方法都失败了');
-				resolve(false);
-				videoCheckPromise = null;
-				lastVideoCheckTime = now;
-				return;
-			}
-			
-			checkMethods[index]().then(result => {
-				if (result.exists) {
-					resolve(true);
-				} else {
-					console.log(`${result.method} 方法失败:`, result.error || `状态码 ${result.status}`);
-					tryNextMethod(index + 1);
-				}
-			}).catch(() => {
-				tryNextMethod(index + 1);
-			});
-		};
-		
-		tryNextMethod(0);
-	});
-	
-	return videoCheckPromise;
-}
-
-// 添加调试函数
-window.debugVideoCheck = async function() {
-	console.log('=== 开始调试视频检查 ===');
-	const exists = await checkStartupVideoExists();
-	console.log('最终结果:', exists ? '存在' : '不存在');
-	console.log('========================');
-	return exists;
-};
-
-async function toggleOnlineData() {
-	console.log('开始切换在线数据模式...');
-	
-	// 检查进入视频文件是否存在（异步）
-	const videoExists = await checkStartupVideoExists();
-	
-	console.log('视频检查结果:', videoExists);
-	
-	if (!videoExists) {
-		console.warn('网页端无法使用此功能！');
-		alert(isEnglishMode ? 'Online feature requires startup video file to be present.' : '网页端无法使用此功能。');
-		// 确保开关关闭状态
-		const toggle = document.getElementById('onlineDataToggle');
-		if (toggle) {
-			toggle.checked = false;
-		}
-		isOnlineDataEnabled = false;
-		localStorage.setItem('isOnlineDataEnabled', 'false');
-		return;
-	}
-
-	isOnlineDataEnabled = document.getElementById('onlineDataToggle').checked;
-	localStorage.setItem('isOnlineDataEnabled', isOnlineDataEnabled.toString());
-	
-	console.log('在线数据模式:', isOnlineDataEnabled ? '启用' : '禁用');
-	
-	// 保存原始函数（首次修改时）
-	if (isOnlineDataEnabled && !originalFunctions.handleFunctionAction) {
-		originalFunctions.handleFunctionAction = handleFunctionAction;
-		originalFunctions.generateFunctionList = generateFunctionList;
-		
-		// 修改函数为在线版本
-		window.handleFunctionAction = onlineHandleFunctionAction;
-		window.generateFunctionList = onlineGenerateFunctionList;
-		
-		alert(isEnglishMode ? 'Online app data enabled! Functions updated.' : '已启用在线应用数据！功能已更新。');
-	} else if (!isOnlineDataEnabled && originalFunctions.handleFunctionAction) {
-		// 恢复原始函数
-		window.handleFunctionAction = originalFunctions.handleFunctionAction;
-		window.generateFunctionList = originalFunctions.generateFunctionList;
-		
-		alert(isEnglishMode ? 'Online app data disabled! Functions restored.' : '已禁用在线数据功能！功能已恢复。');
-	}
-	
-	// 重新生成功能列表
-	generateFunctionList();
-}
-
 
 		/*********************** 多语言相关 *************************/
 		function toggleLanguage() {
@@ -1556,7 +1331,7 @@ async function toggleOnlineData() {
 			if (titleMatch) {
 				return `版本 ${titleMatch[1]} 内测版`;
 			}
-			return '版本 1.2';
+			return '版本 1.3beta';
 		}
 
 		function validateUsername(username) {
@@ -1699,23 +1474,6 @@ async function toggleOnlineData() {
 			document.body.removeChild(textArea);
 		}
 
-		// 保留原函数用于向后兼容，但实际使用通用函数
-		function showLinkModal(text, url) {
-			showGenericModal('linkModal', isEnglishMode ? text.en : text.zh, url);
-		}
-
-		function closeLinkModal(event) {
-			closeGenericModal('linkModal', event);
-		}
-
-		function copyLinkFromModal() {
-			copyGenericLinkFromModal('linkModal');
-		}
-
-		function openLinkFromModal() {
-			openGenericLinkFromModal('linkModal');
-		}
-
 		function showCopySuccess() {
 			const modal = document.getElementById('copySuccessModal');
 			modal.textContent = isEnglishMode ? 'Copied to clipboard' : '已复制到剪贴板';
@@ -1760,11 +1518,6 @@ async function toggleOnlineData() {
 			
 			const version = extractVersionFromHTML();
 			document.getElementById('settingsVersionDisplay').textContent = version.replace('版本 ', '');
-			
-			// 恢复在线数据开关状态
-			const savedOnlineData = localStorage.getItem('isOnlineDataEnabled') === 'true';
-			document.getElementById('onlineDataToggle').checked = savedOnlineData;
-			isOnlineDataEnabled = savedOnlineData;
 		}
 
 		function hideSettings() {
@@ -1812,24 +1565,9 @@ async function toggleOnlineData() {
 		checkLoginStatus();
 		checkLanguageState();
 
-		// 初始化在线数据开关状态
 		document.addEventListener('DOMContentLoaded', function() {
 			console.log('🔧 可配置导航系统已初始化');
 			console.log('📁 请确保图片文件位于同目录下:', NAV_CONFIG.map(item => item.icon).join(', '));
-			
-			// 恢复在线数据开关状态
-			const savedOnlineData = localStorage.getItem('isOnlineDataEnabled') === 'true';
-			document.getElementById('onlineDataToggle').checked = savedOnlineData;
-			isOnlineDataEnabled = savedOnlineData;
-			
-			// 如果启用了在线数据，初始化修改后的函数
-			if (isOnlineDataEnabled) {
-				originalFunctions.handleFunctionAction = handleFunctionAction;
-				originalFunctions.generateFunctionList = generateFunctionList;
-				window.handleFunctionAction = onlineHandleFunctionAction;
-				window.generateFunctionList = onlineGenerateFunctionList;
-				generateFunctionList();
-			}
 		});
 	</script>
 </body>

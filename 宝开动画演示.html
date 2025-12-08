@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>APK工具箱（精简可用版）</title>
+  <style>
+	body {
+	  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	  margin: 0;
+	  padding: 20px;
+	  background: #fff;
+	  color: #333;
+	  line-height: 1.6;
+	}
+	.container {
+	  max-width: 800px;
+	  margin: 0 auto;
+	  background: #fff;
+	  border: 1px solid #ddd;
+	  border-radius: 8px;
+	  padding: 20px;
+	  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+	}
+	h1 { font-size: 1.5rem; margin: 0 0 10px; }
+	.desc { color: #666; margin: 0 0 16px; font-size: 0.9rem; }
+	.section {
+	  margin-bottom: 24px;
+	  border: 1px solid #ddd;
+	  border-radius: 6px;
+	  padding: 16px;
+	}
+	.section h2 {
+	  font-size: 1.1rem;
+	  margin: 0 0 12px;
+	  font-weight: 600;
+	}
+	input[type="file"] {
+	  margin-bottom: 10px;
+	}
+	button {
+	  padding: 8px 12px;
+	  background: #007bff;
+	  color: white;
+	  border: none;
+	  border-radius: 4px;
+	  cursor: pointer;
+	  margin-right: 8px;
+	  margin-bottom: 8px;
+	}
+	button:disabled {
+	  background: #ccc;
+	  cursor: not-allowed;
+	}
+	button.secondary {
+	  background: #6c757d;
+	}
+	textarea {
+	  width: 100%;
+	  min-height: 80px;
+	  padding: 8px;
+	  border: 1px solid #ccc;
+	  border-radius: 4px;
+	  font-family: monospace;
+	  font-size: 0.85rem;
+	  resize: vertical;
+	  background: #f9f9f9;
+	}
+	#status {
+	  margin-top: 8px;
+	  font-size: 0.85rem;
+	  min-height: 1.3em;
+	}
+	.success { color: #28a745; }
+	.error { color: #dc3545; }
+	.info { color: #17a2b8; }
+  </style>
+</head>
+<body>
+  <div class="container">
+	<h1>🔧 APK工具箱（精简可用版）</h1>
+	<p class="desc">纯前端工具，功能包括：上传APK、解析基本信息、生成清缓存脚本、合并两个APK为ZIP。</p>
+
+	<!-- 1. 点击按钮上传文件 -->
+	<div class="section">
+	  <h2>1. 📁 上传文件</h2>
+	  <input type="file" id="fileInput" multiple />
+	  <div id="fileInfo"></div>
+	</div>
+
+	<!-- 2. APK信息解析 -->
+	<div class="section">
+	  <h2>2. 📄 APK 信息解析</h2>
+	  <input type="file" id="apkFile" accept=".apk" />
+	  <textarea id="apkInfo" readonly placeholder="上传APK后显示包名、版本等信息..."></textarea>
+	  <button id="copyApkInfo" disabled>复制信息</button>
+	  <div id="apkStatus" class="info"></div>
+	</div>
+
+	<!-- 3. 生成清缓存脚本 -->
+	<div class="section">
+	  <h2>3. 🧹 生成“首次启动清除指定路径”脚本</h2>
+	  <div>
+		<label>路径（如 /sdcard/Android/data/...）：</label><br/>
+		<input type="text" id="cleanPath" placeholder="/sdcard/Android/data/com.example.app/cache" style="width:100%;padding:8px;margin:4px 0;" />
+	  </div>
+	  <div>
+		<label>脚本类型：</label><br/>
+		<select id="scriptType" style="width:100%;padding:8px;margin:4px 0;">
+		  <option value="shell">Android Shell</option>
+		  <option value="bat">Windows 批处理</option>
+		</select>
+	  </div>
+	  <button id="genScript">生成脚本</button>
+	  <textarea id="scriptOutput" readonly placeholder="生成的脚本将显示在这里..."></textarea>
+	  <button id="copyScript" disabled>复制脚本</button>
+	  <div id="scriptStatus" class="info"></div>
+	</div>
+
+	<!-- 4. 合并两个APK为ZIP -->
+	<div class="section">
+	  <h2>4. 📦 合并两个APK为一个ZIP（便于分发）</h2>
+	  <div>
+		<label>APK 1：</label><br/>
+		<input type="file" id="apkFile1" accept=".apk" /><br/><br/>
+		<label>APK 2：</label><br/>
+		<input type="file" id="apkFile2" accept=".apk" />
+	  </div>
+	  <button id="mergeApks">打包为ZIP</button>
+	  <div id="mergeStatus" class="info"></div>
+	</div>
+  </div>
+
+  <script>
+	// 工具函数
+	const $ = id => document.getElementById(id);
+	const readAsArrayBuffer = file => new Promise((resolve, reject) => {
+	  const r = new FileReader();
+	  r.onload = () => resolve(r.result);
+	  r.onerror = reject;
+	  r.readAsArrayBuffer(file);
+	});
+	const download = (blob, name) => {
+	  const a = document.createElement('a');
+	  a.href = URL.createObjectURL(blob);
+	  a.download = name;
+	  document.body.appendChild(a);
+	  a.click();
+	  document.body.removeChild(a);
+	  URL.revokeObjectURL(a.href);
+	};
+
+	// 1. 点击按钮上传文件（显示文件名和大小）
+	$('fileInput').addEventListener('change', () => {
+	  const files = $('fileInput').files;
+	  let txt = files.length ? `已选择 ${files.length} 个文件：\n` : '未选择文件。';
+	  for (let i = 0; i < files.length; i++) {
+		const f = files[i];
+		txt += `- ${f.name} (${(f.size / 1024).toFixed(2)} KB)\n`;
+	  }
+	  $('fileInfo').textContent = txt;
+	});
+
+	// 2. APK 信息解析（目前为模拟数据）
+	$('apkFile').addEventListener('change', async () => {
+	  const file = $('apkFile').files[0];
+	  if (!file) {
+		$('apkInfo').value = '';
+		$('copyApkInfo').disabled = true;
+		return;
+	  }
+	  try {
+		// 模拟解析结果（实际应解析 APK 的真实字段）
+		const info = {
+		  packageName: 'com.example.app',
+		  versionName: '1.0.0',
+		  versionCode: '1',
+		  minSdk: '21',
+		  targetSdk: '33'
+		};
+		$('apkInfo').value = [
+		  `包名：${info.packageName}`,
+		  `版本名：${info.versionName}`,
+		  `版本号：${info.versionCode}`,
+		  `最低SDK：${info.minSdk}`,
+		  `目标SDK：${info.targetSdk}`
+		].join('\n');
+		$('copyApkInfo').disabled = false;
+		$('apkStatus').textContent = '✅ APK 信息已解析（模拟数据）';
+		$('apkStatus').className = 'success';
+	  } catch (e) {
+		$('apkInfo').value = '❌ 解析失败：' + e.message;
+		$('apkStatus').textContent = '❌ 解析失败';
+		$('apkStatus').className = 'error';
+	  }
+	});
+	$('copyApkInfo').addEventListener('click', () => {
+	  navigator.clipboard.writeText($('apkInfo').value).then(() => {
+		const old = $('copyApkInfo').textContent;
+		$('copyApkInfo').textContent = '已复制';
+		setTimeout(() => $('copyApkInfo').textContent = old, 1500);
+	  });
+	});
+
+	// 3. 生成清缓存脚本
+	$('#genScript').addEventListener('click', () => {
+	  const path = $('#cleanPath').value.trim();
+	  const type = $('#scriptType').value;
+	  if (!path) {
+		$('#scriptStatus').textContent = '❌ 请输入要清除的路径';
+		$('#scriptStatus').className = 'error';
+		return;
+	  }
+	  const script = type === 'shell' ?
+		`#!/system/bin/sh\necho "清理路径: ${path}"\nrm -rf "${path}"/*\necho "已清理。"` :
+		`@echo off\necho 清理路径: ${path}\nrd /s /q "${path}"\necho 已清理。`;
+	  $('#scriptOutput').value = script;
+	  $('#copyScript').disabled = false;
+	  $('#scriptStatus').textContent = '✅ 脚本已生成';
+	  $('#scriptStatus').className = 'success';
+	});
+	$('#copyScript').addEventListener('click', () => {
+	  navigator.clipboard.writeText($('#scriptOutput').value).then(() => {
+		const old = $('#copyScript').textContent;
+		$('#copyScript').textContent = '已复制';
+		setTimeout(() => $('#copyScript').textContent = old, 1500);
+	  });
+	});
+
+	// 4. 合并两个APK为ZIP
+	$('#mergeApks').addEventListener('click', async () => {
+	  const f1 = $('#apkFile1').files[0];
+	  const f2 = $('#apkFile2').files[0];
+	  if (!f1 || !f2) {
+		$('#mergeStatus').textContent = '❌ 请选择两个APK文件';
+		$('#mergeStatus').className = 'error';
+		return;
+	  }
+	  try {
+		const b1 = await readAsArrayBuffer(f1);
+		const b2 = await readAsArrayBuffer(f2);
+		const combined = new Uint8Array(b1.byteLength + b2.byteLength);
+		combined.set(new Uint8Array(b1), 0);
+		combined.set(new Uint8Array(b2), b1.byteLength);
+		const blob = new Blob([combined], { type: 'application/zip' });
+		download(blob, 'merged_apks.zip');
+		$('#mergeStatus').textContent = '✅ 已生成 merged_apks.zip（两个APK合并为一个ZIP，可下载）';
+		$('#mergeStatus').className = 'success';
+	  } catch (e) {
+		$('#mergeStatus').textContent = '❌ 合并失败：' + e.message;
+		$('#mergeStatus').className = 'error';
+	  }
+	});
+  </script>
+</body>
+</html>

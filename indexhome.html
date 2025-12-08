@@ -4,63 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<title>软件搜索下载</title>
-	
-	<!-- 自动跳转逻辑 - 优先执行，独立封装 + 容错处理 -->
-	<script>
-		(function() {
-			// 核心配置
-			const CONFIG = {
-				ONLINE_PAGE: 'indexonline.html', // 修正拼写错误 indexonine -> indexonline
-				JUMP_DELAY: 0, // 跳转延迟（毫秒），0为立即跳转
-				STORAGE_KEY: 'isOnlineDataEnabled' // 本地存储键名
-			};
 
-			/**
-			 * 安全读取本地存储（兼容隐私模式）
-			 * @returns {boolean} 在线模式状态
-			 */
-			function getOnlineDataState() {
-				try {
-					// 检测localStorage是否可用
-					if (typeof localStorage === 'undefined') return false;
-					return localStorage.getItem(CONFIG.STORAGE_KEY) === 'true';
-				} catch (e) {
-					console.warn('本地存储不可用，禁用在线模式跳转:', e);
-					return false;
-				}
-			}
-
-			/**
-			 * 执行跳转（添加防重复跳转保护）
-			 */
-			function handleAutoJump() {
-				const isOnlineEnabled = getOnlineDataState();
-				const currentPage = window.location.pathname.split('/').pop();
-
-				// 调试日志
-				console.log('在线应用数据开关状态：', isOnlineEnabled ? '开启' : '关闭');
-
-				// 防止重复跳转（当前已是目标页面则不处理）
-				if (isOnlineEnabled && currentPage !== CONFIG.ONLINE_PAGE) {
-					console.log(`即将跳转到在线页面：${CONFIG.ONLINE_PAGE}`);
-					setTimeout(() => {
-						window.location.href = CONFIG.ONLINE_PAGE;
-					}, CONFIG.JUMP_DELAY);
-				} else {
-					console.log(isOnlineEnabled 
-						? `当前已是在线页面 ${CONFIG.ONLINE_PAGE}，无需跳转` 
-						: '未开启在线模式，保持当前页面');
-				}
-			}
-
-			// 页面完全加载后执行（确保主页面元素加载前完成判断）
-			if (document.readyState === 'complete') {
-				handleAutoJump();
-			} else {
-				window.addEventListener('load', handleAutoJump);
-			}
-		})();
-	</script>
 
 	<!-- 主页面样式 -->
 	<style>
@@ -886,8 +830,8 @@
 					text: "游戏定位是剧情为主，难度休闲偏微挑战！",
 					downloads: [
 						{
-							url: "https://qun.qq.com/universal-share/share?ac=1&authKey=cvrccBe19rE5c9UGSdpw7ZphWwWT1GHHlThgDodYXqVkSyDgW9FQP%2BKKWYii1rVk&busi_data=eyJncm91cENvZGUiOiI4MzIyODcwOTgiLCJ0b2tlbiI6Im1Xb3ZwMWI5dEVlbkxaL2pzQllkaC9JWS9lbGJ6M1hsaGkyK2VqVndReXFBQy9RVHBPUVlId2NDbVNTRlFlTEciLCJ1aW4iOiIxMzIyMDMzNTkyIn0=&data=oi3-XRWXuYVNGnErhbB3YMpemyq_gnifJmv3NtJNXfPxB3riOG97HAeXzQBiEobSQaMNPjGzKHgUjG1Hu0StcV3D9gw3VD2QsMXZMow3iUM&svctype=5&tempid=h5_group_info",
-							text: "加入QQ交流群获取"
+							url: "",
+							text: "QQ:1005196747"
 						},
 						{
 							url: "https://www.123684.com/s/zWgIjv-XcA8",
@@ -919,7 +863,7 @@
 				popup: {
 					text: "PVZ2: DLC原版自制关卡系列由Daybs独立制作，致力于带给玩家再续国际版主线的独特体验。拥有经过精心设计的如“泳池派对”“罗马帝国”的主线世界！",
 					downloads: [
-						{ url: "https://qun.qq.com/universal-share/share?ac=1&authKey=rRBvC7ReiDl3u6bTdNSGqq77nJMuqtxfqmKtgL%2BHbrJ4tnwbx2b7wVvqfTzB71%2B5&busi_data=eyJncm91cENvZGUiOiI3MTQyNjExMTkiLCJ0b2tlbiI6IkVrUkxXR1l6TGw1blE2M0dRbjBITVJrV3hldUFXZjdBR2Z3VW1VWEtUSTZSMjE5TTF4cFVNdmw5MmRlSVpvdWMiLCJ1aW4iOiIyMDE5OTQ3MDg1In0%3D&data=xLVgAtwHP5Z8mLVgsBrSK_dVYxE3HCUyix_309FK_HVwEGZVrbslwDZ_kwWxDlcIiNBr2qBOOkzhMcXOVh7GMw&svctype=4&tempid=h5_group_info", text: "加入QQ交流群获取" }
+						{ url: "https://qun.qq.com/universal-share/share?ac=1&authKey=RnWhP%2BiImfcUj62qfVCB6tmL%2BdjlKkqP%2B6kaXQzKWbb2%2FI3oqmmYpdriQMFt3Kv8&busi_data=eyJncm91cENvZGUiOiI3MTQyNjExMTkiLCJ0b2tlbiI6IjZ0UjUzZG5Da3ZRWXpIdyszajdxSFovV241VkxWTHpkNUNyUERhcWd1QjJEVTNuc0xvUHI1UHY4am90SUd4Z0UiLCJ1aW4iOiIyMDE5OTQ3MDg1In0%3D&data=214zvOX6zKMzpEQ3GP0s_yhE4edwjKHN3fYwDTQsAKbWszB7qPHyBN_L96AYQjK5TWK88hU3uZhvF03s2HnrcA&svctype=4&tempid=h5_group_info", text: "加入QQ交流群获取" }
 					]
 				}
 			},
