@@ -1,200 +1,191 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-	<title>软件搜索下载</title>
-	<style>
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>软件搜索下载</title>
+  <style>
+	* {
+	  margin: 0;
+	  padding: 0;
+	  box-sizing: border-box;
+	}
 
-		body {
-			font-family: Arial, sans-serif;
-			background-color: #f5f5f5;
-			padding: 0;
-			touch-action: pan-x pan-y;
-			overflow-x: hidden;
-			padding-bottom: 60px; /* 为底部导航预留空间 */
-		}
+	body {
+	  font-family: Arial, sans-serif;
+	  background-color: #f5f5f5;
+	  padding: 0;
+	  touch-action: pan-x pan-y;
+	  overflow-x: hidden;
+	  min-height: 100vh;
+	  position: relative;
+	  overflow: hidden;
+	}
 
-		/* 防止页面缩放 */
-		html {
-			touch-action: manipulation;
-			-webkit-text-size-adjust: none;
-			-ms-text-size-adjust: none;
-			text-size-adjust: none;
-		}
+	html {
+	  touch-action: manipulation;
+	  -webkit-text-size-adjust: none;
+	  -ms-text-size-adjust: none;
+	  text-size-adjust: none;
+	}
 
-		/* 核心修改：AFDian网页嵌入容器 */
-		.afdian-container {
-			width: 100%;
-			height: calc(100vh - 60px); /* 占满除底部导航外的全部高度 */
-			border: none;
-			overflow: auto; /* 允许内部滚动 */
-		}
+	.afdian-container {
+	  width: 100%;
+	  height: 100vh;
+	  border: none;
+	  overflow: auto;
+	  display: block;
+	  position: relative;
+	  z-index: 1;
+	  min-height: calc(100vh - 60px);
+	}
 
-		/* 底部导航栏（保留原有样式） */
-		.bottom-nav {
-			position: fixed;
-			bottom: 0;
-			left: 0;
-			width: 100%;
-			height: 60px;
-			background-color: #fff;
-			border-top: 1px solid #e5e5e5;
-			display: flex;
-			justify-content: space-around;
-			align-items: center;
-			z-index: 200;
-		}
+	.bottom-nav {
+	  position: fixed;
+	  bottom: 0;
+	  left: 0;
+	  width: 100%;
+	  height: 60px;
+	  background-color: #fff;
+	  border-top: 1px solid #e5e5e5;
+	  display: flex;
+	  justify-content: space-around;
+	  align-items: center;
+	  z-index: 9999;
+	  pointer-events: auto;
+	  transform: translateZ(0);
+	  -webkit-transform: translateZ(0);
+	  overflow: hidden;
+	  opacity: 1 !important;
+	  visibility: visible !important;
+	}
 
-		.nav-item {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			flex: 1;
-			height: 100%;
-			text-decoration: none;
-			color: #999;
-			transition: color 0.3s;
-		}
+	.nav-item {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  flex: 1;
+	  height: 100%;
+	  text-decoration: none;
+	  color: #999;
+	  transition: color 0.3s;
+	  pointer-events: auto;
+	  white-space: nowrap;
+	}
 
-		.nav-item.active {
-			color: #4CAF50;
-		}
+	.nav-item.active {
+	  color: #4CAF50;
+	}
 
-		.nav-icon {
-			width: 24px;
-			height: 24px;
-			margin-bottom: 4px;
-			font-size: 20px;
-		}
+	.nav-icon {
+	  width: 24px;
+	  height: 24px;
+	  margin-bottom: 4px;
+	  font-size: 20px;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	}
 
-		.nav-icon img {
-			width: 100%;
-			height: 100%;
-			object-fit: contain;
-		}
+	.nav-icon img {
+	  width: 100%;
+	  height: 100%;
+	  object-fit: contain;
+	  transition: opacity 0.3s;
+	}
 
-		.nav-text {
-			font-size: 12px;
-		}
+	.nav-text {
+	  font-size: 12px;
+	  -webkit-font-smoothing: antialiased;
+	}
 
-		/* 保留必要的弹窗样式（不影响主功能） */
-		.wechat-notification, .copy-success-modal, .modal-overlay, .terms-overlay, .loading-overlay, .nav-safe-indicator {
-			display: none !important;
-		}
-	</style>
+	.wechat-notification,
+	.copy-success-modal,
+	.modal-overlay,
+	.terms-overlay,
+	.loading-overlay,
+	.nav-safe-indicator {
+	  display: none !important;
+	}
+  </style>
 </head>
-<body>
-	<!-- 核心修改：嵌入AFDian网页 -->
-	<iframe class="afdian-container" src="https://afdian.com/a/DLHC1145" allowfullscreen></iframe>
 
-	<!-- 底部导航栏 - 动态生成（保留原有逻辑） -->
-	<div class="bottom-nav" id="bottomNav">
-		<!-- 导航项将通过JavaScript动态生成 -->
-	</div>
+  <!-- 主内容区域 -->
+  <iframe
+	class="afdian-container"
+	src="https://qun.qq.com/universal-share/share?ac=1&authKey=is9p6%2B3SPyFTida4NFvw7i0tXajcjzykKvSxGxWE1L2SDOIJ%2BIfGBt3Ig70fER53&busi_data=eyJncm91cENvZGUiOiI4NTczMTMyNDIiLCJ0b2tlbiI6IktZSGpPYjNHSktzTWc2R3dGMC9xTDJIOE1XUlRGNEhuTGtyaGV6UDFweDVvczJsS1BsNVlJZHhDcGxFSnQ0TVAiLCJ1aW4iOiIyMDE5OTQ3MDg1In0%3D&data=iQTw8uCwcF3AppkQOBukZqTGn_atXnV6xITfVNzviz5VXsFlzS6L_ihYtcs3xNAGsBQdmT7G7qVM9jN5gyLeIw&svctype=4&tempid=h5_group_info"
+	allowfullscreen
+  ></iframe>
 
-	<script>
-		/*********************** 可配置的底部导航 *************************/
-		const NAV_CONFIG = [
-		  { 
-			icon: 'home.png', 
-			text: { zh: '主页', en: 'Home' }, 
-			link: 'indexhome.html', 
-			active: true 
-		  },
-		  { 
-			icon: 'author.png', 
-			text: { zh: '爱发电', en: 'Author' }, 
-			link: 'index2.html' 
-		  },
-		  { 
-			icon: 'my.png', 
-			text: { zh: '我的', en: 'Profile' }, 
-			link: 'index3.html' 
-		  }
-		];
+  <script>
+	// ================== 配置区 ==================
+	const CACHE_EXPIRY_MS = 10 * 60 * 1000; // 缓存保存时间：10分钟
+	const CHECK_INTERVAL_MS = 5 * 60 * 1000; // 兜底检查：每5分钟
+	const STORAGE_KEY = 'lastUnloadTime';
+	// ===========================================
 
-		// 多语言相关变量（保留以支持导航文本切换）
-		let isEnglishMode = false;
-		
-		// 保存/读取语言设置
-		function saveLanguageState(isEnglish) {
-			localStorage.setItem('isEnglish', isEnglish.toString());
-		}
 
-		function getLanguageState() {
-			return localStorage.getItem('isEnglish') === 'true';
-		}
 
-		// 根据语言获取导航链接
-		function getNavLinkPath(configItem) {
-			return isEnglishMode ? configItem.link : configItem.link;
-		}
+	// ========== 十分钟自动清缓存并刷新 ==========
+	function recordUnloadTime() {
+	  try {
+		localStorage.setItem(STORAGE_KEY, Date.now().toString());
+	  } catch (e) {
+		// 忽略隐私模式/存储异常
+	  }
+	}
 
-		// 生成底部导航HTML
-		function generateBottomNav() {
-			const bottomNav = document.getElementById('bottomNav');
-			let navHTML = '';
-			
-			NAV_CONFIG.forEach((item, index) => {
-				const isActive = item.active ? 'active' : '';
-				const text = isEnglishMode ? item.text.en : item.text.zh;
-				const link = getNavLinkPath(item);
-				
-				navHTML += `
-					<a href="${link}" class="nav-item ${isActive}" onclick="handleNavigation(${index}, event)">
-						<div class="nav-icon">
-							<img src="img/${item.icon}" alt="${text}" onerror="this.style.display='none'; this.parentNode.innerHTML='📁'; this.parentNode.style.fontSize='20px'; this.parentNode.style.display='flex'; this.parentNode.style.alignItems='center'; this.parentNode.style.justifyContent='center';">
-						</div>
-						<div class="nav-text">${text}</div>
-					</a>
-				`;
-			});
-			
-			bottomNav.innerHTML = navHTML;
-		}
+	function getLastUnloadTime() {
+	  try {
+		const t = localStorage.getItem(STORAGE_KEY);
+		return t ? Number(t) : 0;
+	  } catch (e) {
+		return 0;
+	  }
+	}
 
-		// 导航处理函数
-		function handleNavigation(index, event) {
-			if (event) event.preventDefault();
-			const configItem = NAV_CONFIG[index];
-			const targetPage = getNavLinkPath(configItem);
-			window.location.href = targetPage;
-			updateNavigationState(index);
-		}
+	function checkAndRefreshIfExpired() {
+	  const now = Date.now();
+	  const last = getLastUnloadTime();
+	  if (now - last > CACHE_EXPIRY_MS) {
+		// 可选：清理站点缓存（谨慎使用，会清Cookie/本地存储）
+		// if ('caches' in window) caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+		localStorage.clear();
+		sessionStorage.clear();
+		// 触发页面重新加载
+		window.location.reload();
+	  }
+	}
 
-		// 更新导航激活状态
-		function updateNavigationState(activeIndex) {
-			const navItems = document.querySelectorAll('.bottom-nav .nav-item');
-			navItems.forEach((item, index) => {
-				index === activeIndex ? item.classList.add('active') : item.classList.remove('active');
-			});
-		}
+	function onVisibilityChange() {
+	  if (document.visibilityState === 'visible') {
+		checkAndRefreshIfExpired();
+	  }
+	}
 
-		// 切换语言（保留以支持导航文本切换）
-		function toggleLanguage() {
-			isEnglishMode = !isEnglishMode;
-			saveLanguageState(isEnglishMode);
-			generateBottomNav();
-		}
+	// 兜底：定时检查
+	let intervalId = setInterval(checkAndRefreshIfExpired, CHECK_INTERVAL_MS);
 
-		// 检查语言状态并初始化导航
-		function checkLanguageState() {
-			isEnglishMode = getLanguageState();
-			generateBottomNav();
-		}
+	// 绑定事件
+	document.addEventListener('visibilitychange', onVisibilityChange);
+	window.addEventListener('pageshow', onVisibilityChange);
+	window.addEventListener('pagehide', recordUnloadTime);
+	window.addEventListener('beforeunload', recordUnloadTime);
 
-		// 初始化
-		document.addEventListener('DOMContentLoaded', function() {
-			checkLanguageState();
-			console.log('AFDian页面已加载，底部导航初始化完成');
-		});
-	</script>
+	// 首次进入也检查一次
+	document.addEventListener('DOMContentLoaded', () => {
+	  updateBottomNav();
+	  setTimeout(checkAndRefreshIfExpired, 300);
+	  console.log('导航栏已锁定，初始化完成');
+	});
+
+	// 禁止iframe滚动冒泡
+	document
+	  .querySelector('.afdian-container')
+	  .addEventListener('scroll', function (e) {
+		e.stopPropagation();
+	  });
+  </script>
 </body>
 </html>
