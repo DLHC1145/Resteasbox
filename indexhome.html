@@ -2,6 +2,32 @@
 <html lang="zh-CN">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>软件搜索下载</title>
+	<style>
+		body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+	</style>
+</head>
+<body>
+	<script>
+		// 页面加载时自动执行
+		window.onload = function() {
+			// 检查是否启用了在线数据功能
+			const isOnlineEnabled = localStorage.getItem('isOnlineDataEnabled') === 'true';
+			
+			if (isOnlineEnabled) {
+				// 如果在线功能开启，跳转到 index.online.html
+				window.location.href = 'indexonline.html';
+			}
+			// 如果在线功能未开启，继续正常加载当前页面
+		};
+	</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<title>软件搜索下载</title>
 
@@ -675,8 +701,13 @@
 				"《植物大战僵尸：美丽新世界》重拾系列经典玩法。开放更多的自定义插件项目，带来无与伦比的体验。玩家将再度开启跨时空冒险，收集并运用植物，全力抵御僵尸浪潮的入侵，重温原味塔防体验。": "\"Plants vs. Zombies: Brave New World\" revives classic gameplay with more customization. Players adventure through time to defend against zombies!",
 				"点击加群获取": "Click to join group to get",
 				"获取": "Get",
+				"在线使用云盘下载（直装包）": "Online cloud disk download (direct package)",
+				"西部的某座鬼镇，海湾边的海盗们，埃及的法老王... 传奇的迷宫却不知为何消逝的无影无踪。 总在回忆着，某座小镇、某支钥匙、某个机器所说的大脑的断裂。 低画质与阉割的小曲却包含着老玩家的回忆，这是回不去的..吗? 改版《植物大战僵尸2:迷宫·混沌》欢迎您来体验！": "A ghost town in the West, pirates by the bay, Egyptian pharaohs... The legendary maze vanished without a trace for unknown reasons. Always recalling: a small town, a key, a machine's mention of the brain's fracture. Low-res graphics and cut-down tunes hold old players' memories—gone forever... or not? Modified Plants vs. Zombies 2: Maze·Chaos welcomes you to experience!",
+				"下载必要文件（针对部分设备）": "Download necessary files (for some devices)",
 				"前往QQ群获取最新版本，第一时间获取最新版本更新！使用123云盘下载，直接在线下载！":"Join the QQ group to get the latest versionand receive updates as soon as they're released!Download via 123 Cloud Disk for direct online downloading!",
 				"前往": "Go",
+				"8.4分  作者：玉米 在《植物大战僵尸：迷宫·混沌》中，过往的传奇不再是想象与回忆。": "8.4/10-Corn In Plants vs. Zombies: Maze and Chaos, the legend of the past is no longer imagination and memory.",
+				"植物大战僵尸2迷宫混沌版": "Plants vs. Zombies 2 Maze: Chaos",
 				"8.2分  内含内购破解、画质高清修复！作者：玉米，7000i，屑fell":"8.2/10Classic Maze Version 1.7.5 - The Final Maze Edition! Authors: Corn, 7000i, Sai fell",
 				"1.7.5经典迷宫版本！内含内购破解、画质高清修复！是最后一个迷宫版本！":"Version 1.7.5 - Classic Maze Edition! Includes in-app purchase crack and high-definition graphics restoration! This is the final maze version!",
 				"植物大战僵尸2失落之城1.7.5":"Plants vs. Zombies 2: Lost City 1.7.5",
@@ -842,6 +873,30 @@
 			},
 			{
 				rank: 1,
+				name: "植物大战僵尸2迷宫混沌版",
+				score: "8.4分  作者：玉米 在《植物大战僵尸：迷宫·混沌》中，过往的传奇不再是想象与回忆。",
+				downloadUrl: "https://www.123684.com/s/zWgIjv-XcA8",
+				image: "植物大战僵尸2混沌.jpg",
+					popup: {
+					text: "西部的某座鬼镇，海湾边的海盗们，埃及的法老王... 传奇的迷宫却不知为何消逝的无影无踪。 总在回忆着，某座小镇、某支钥匙、某个机器所说的大脑的断裂。 低画质与阉割的小曲却包含着老玩家的回忆，这是回不去的..吗? 改版《植物大战僵尸2:迷宫·混沌》欢迎您来体验！",
+					downloads: [
+						{
+							url: "https://www.123684.com/s/zWgIjv-o5A8",
+							text: "在线使用云盘下载（直装包）"
+						},
+						{
+							url: "https://www.123684.com/s/zWgIjv-45A8",
+							text: "下载必要文件（针对部分设备）"
+						},
+						{
+							url: "https://qun.qq.com/universal-share/share?ac=1&authKey=Okd%2FuENO%2BfyYysJiR2N8HZby1U7AqM8skUgUaSI3GzCGL9KfJYpdPy4GQXXEXI62&busi_data=eyJncm91cENvZGUiOiIzMTQwOTE2NzMiLCJ0b2tlbiI6IjRaSEVMems3ZWlPRDV3RWxzR0lUNmsybEpxT0hvcldIVkczTGUxd1crcGlMOXlNZCtBZkxQYjdIRWo3aVdPTDYiLCJ1aW4iOiIyMDE5OTQ3MDg1In0%3D&data=pbcT5R33MPQ-fj_QqCISbXIxTvbwNpfuzTLZvg9GbrSR1K1pe3nYwE_rduikQeYdJFTyJYSmoB38ZR60kFsrbg&svctype=4&tempid=h5_group_info",
+							text: "加入QQ交流群获取"
+						}
+					]
+				}
+			},
+			{
+				rank: 1,
 				name: "植物大战僵尸2衍生版",
 				score: "7.8分  作者：小米食堂厨师长",
 				downloadUrl: "https://www.123684.com/s/zWgIjv-ncA8",
@@ -932,10 +987,6 @@
 						},
 						{
 							url: "https://1drv.ms/f/c/ca303ad2d43918b2/ErIYOdTSOjAggMqpAAAAAAABaYJBklXNYVebE24ZXcG_yQ",
-							text: "使用onedrive在线下载（需要魔法）"
-						},
-						{
-							url: "http://118.250.134.219:81/apkbuild/apk/gdzmygeq.apk",
 							text: "使用onedrive在线下载（需要魔法）"
 						}
 					]

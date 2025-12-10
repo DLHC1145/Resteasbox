@@ -1,14 +1,34 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0;url=index.html" />
-  <title>跳转中</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>加载中</title>
+	<style>
+		* { margin: 0; padding: 0; }
+		body {
+			width: 100vw;
+			height: 100vh;
+			overflow: hidden;
+			background: url("图片.jpg") no-repeat center center;
+			background-size: cover;
+		}
+	</style>
 </head>
 <body>
-  <script>
-	// 立即跳转（作为 <meta> 的兜底）
-	window.location.href = 'indexhome.html';
-  </script>
+<script>
+const localVer = 1.2;
+fetch('https://dlhc1145.github.io/PvZMagicBox/版本号.txt')
+.then(res => res.text())
+.then(remoteStr => {
+	const remoteVer = Number(remoteStr.trim());
+	setTimeout(() => {
+		window.location.href = localVer - remoteVer <= -0.1 ? '版本过低.html' : 'indexhome.html';
+	}, 2000);
+})
+.catch(() => {
+	setTimeout(() => window.location.href = 'indexhome.html', 500);
+});
+</script>
 </body>
 </html>
