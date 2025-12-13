@@ -12,39 +12,40 @@
 		}
 
 		body {
-			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+			background-color: #f5f5f5;
 			min-height: 100vh;
 			padding: 20px;
 			color: #333;
+			line-height: 1.6;
 		}
 
 		.container {
 			max-width: 600px;
 			margin: 0 auto;
-			background: rgba(255, 255, 255, 0.95);
-			border-radius: 20px;
-			box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-			backdrop-filter: blur(10px);
+			background: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 			overflow: hidden;
 		}
 
 		.header {
-			background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-			padding: 25px;
+			background: white;
+			padding: 25px 20px;
 			text-align: center;
-			color: white;
+			border-bottom: 1px solid #eee;
 		}
 
 		.header h1 {
-			font-size: 2em;
+			font-size: 1.6em;
 			margin-bottom: 8px;
-			font-weight: 700;
+			font-weight: 600;
+			color: #2c3e50;
 		}
 
 		.header p {
-			font-size: 0.95em;
-			opacity: 0.9;
+			font-size: 0.9em;
+			color: #666;
 		}
 
 		.main-content {
@@ -58,17 +59,15 @@
 		}
 
 		.timestamp-card {
-			background: #fff;
-			border-radius: 15px;
+			background: white;
+			border-radius: 6px;
 			padding: 20px;
-			box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-			border: 1px solid #e1e8ed;
-			transition: all 0.3s ease;
+			border: 1px solid #e0e0e0;
+			transition: all 0.2s ease;
 		}
 
 		.timestamp-card:hover {
-			transform: translateY(-2px);
-			box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 		}
 
 		.card-header {
@@ -79,24 +78,24 @@
 		}
 
 		.card-title {
-			font-size: 1.1em;
+			font-size: 1em;
 			font-weight: 600;
 			color: #2c3e50;
 		}
 
 		.source-badge {
-			background: linear-gradient(135deg, #e17055 0%, #fdcb6e 100%);
+			background: #666;
 			color: white;
-			padding: 4px 12px;
-			border-radius: 15px;
-			font-size: 0.8em;
-			font-weight: 600;
+			padding: 3px 8px;
+			border-radius: 10px;
+			font-size: 0.75em;
+			font-weight: 500;
 		}
 
 		.timestamp-display {
 			background: #f8f9fa;
-			border: 2px solid #e1e8ed;
-			border-radius: 10px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
 			padding: 15px;
 			margin-bottom: 15px;
 			font-family: 'Courier New', monospace;
@@ -104,32 +103,32 @@
 		}
 
 		.timestamp-type {
-			font-size: 0.85em;
-			color: #636e72;
-			margin-bottom: 8px;
-			font-weight: 600;
+			font-size: 0.8em;
+			color: #666;
+			margin-bottom: 6px;
+			font-weight: 500;
 		}
 
 		.timestamp-value {
-			font-size: 1.2em;
+			font-size: 1.1em;
 			color: #2c3e50;
 			word-break: break-all;
 			line-height: 1.4;
 			cursor: pointer;
-			padding: 10px;
-			background: rgba(255, 255, 255, 0.8);
-			border-radius: 6px;
-			transition: all 0.3s ease;
+			padding: 8px;
+			background: white;
+			border-radius: 3px;
+			border: 1px solid #ddd;
+			transition: all 0.2s ease;
 		}
 
 		.timestamp-value:hover {
-			background: rgba(255, 255, 255, 1);
-			transform: scale(1.02);
+			background: #f0f0f0;
 		}
 
 		.timestamp-description {
 			font-size: 0.85em;
-			color: #636e72;
+			color: #666;
 			margin-bottom: 15px;
 			line-height: 1.4;
 		}
@@ -140,56 +139,63 @@
 		}
 
 		.btn {
-			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			background: #4a90e2;
 			color: white;
 			border: none;
 			padding: 8px 16px;
-			border-radius: 20px;
-			font-size: 0.9em;
-			font-weight: 600;
+			border-radius: 4px;
+			font-size: 0.85em;
+			font-weight: 500;
 			cursor: pointer;
-			transition: all 0.3s ease;
+			transition: all 0.2s ease;
 			flex: 1;
 		}
 
 		.btn:hover {
-			transform: translateY(-2px);
-			box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+			background: #357abd;
 		}
 
 		.btn-copy {
-			background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+			background: #27ae60;
+		}
+
+		.btn-copy:hover {
+			background: #219a52;
 		}
 
 		.btn-refresh {
-			background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+			background: #e67e22;
+		}
+
+		.btn-refresh:hover {
+			background: #d35400;
 		}
 
 		.refresh-btn {
 			position: absolute;
-			top: 10px;
-			right: 10px;
-			background: rgba(116, 185, 255, 0.1);
+			top: 8px;
+			right: 8px;
+			background: #f0f0f0;
 			border: none;
 			border-radius: 50%;
-			width: 30px;
-			height: 30px;
+			width: 26px;
+			height: 26px;
 			cursor: pointer;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			transition: all 0.3s ease;
-			font-size: 0.8em;
+			transition: all 0.2s ease;
+			font-size: 0.75em;
+			color: #666;
 		}
 
 		.refresh-btn:hover {
-			background: rgba(116, 185, 255, 0.2);
-			transform: rotate(180deg);
+			background: #e0e0e0;
 		}
 
 		@media (max-width: 768px) {
 			.header h1 {
-				font-size: 1.6em;
+				font-size: 1.4em;
 			}
 			
 			.main-content {
@@ -205,47 +211,20 @@
 			}
 		}
 
-		.animation-pulse {
-			animation: pulse 0.5s ease-in-out;
-		}
-
-		@keyframes pulse {
-			0% { transform: scale(1); }
-			50% { transform: scale(1.05); }
-			100% { transform: scale(1); }
-		}
-
-		.notification {
-			position: fixed;
-			top: 20px;
-			right: 20px;
-			padding: 12px 20px;
-			border-radius: 8px;
-			color: white;
-			font-weight: 600;
-			z-index: 1000;
-			transform: translateX(100%);
-			transition: transform 0.3s ease;
-			background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-		}
-
-		.notification.show {
-			transform: translateX(0);
-		}
-
 		.footer {
 			text-align: center;
 			padding: 20px;
-			color: #7f8c8d;
-			font-size: 0.85em;
-			border-top: 1px solid #e1e8ed;
+			color: #888;
+			font-size: 0.8em;
+			border-top: 1px solid #eee;
+			background: #f9f9f9;
 		}
 	</style>
 </head>
 <body>
 	<div class="container">
 		<div class="header">
-			<h1>⏰ 时间戳工具</h1>
+			<h1>时间戳工具</h1>
 			<p>本地时间戳获取与复制</p>
 		</div>
 
@@ -257,7 +236,7 @@
 						<div class="source-badge">本地</div>
 					</div>
 					<div class="timestamp-display">
-						<button class="refresh-btn" onclick="refreshTimestamp('local-unix-seconds')">🔄</button>
+						<button class="refresh-btn" onclick="refreshTimestamp('local-unix-seconds')">↻</button>
 						<div class="timestamp-type">10位 Unix 时间戳（秒）</div>
 						<div class="timestamp-value" id="local-unix-seconds" onclick="copyToClipboard(this.textContent)">
 							点击刷新获取...
@@ -268,10 +247,10 @@
 					</div>
 					<div class="card-buttons">
 						<button class="btn btn-copy" onclick="copyTimestamp('local-unix-seconds')">
-							📋 复制
+							复制
 						</button>
 						<button class="btn btn-refresh" onclick="refreshTimestamp('local-unix-seconds')">
-							🔄 刷新
+							刷新
 						</button>
 					</div>
 				</div>
@@ -282,7 +261,7 @@
 						<div class="source-badge">本地</div>
 					</div>
 					<div class="timestamp-display">
-						<button class="refresh-btn" onclick="refreshTimestamp('local-unix-milliseconds')">🔄</button>
+						<button class="refresh-btn" onclick="refreshTimestamp('local-unix-milliseconds')">↻</button>
 						<div class="timestamp-type">13位 Unix 时间戳（毫秒）</div>
 						<div class="timestamp-value" id="local-unix-milliseconds" onclick="copyToClipboard(this.textContent)">
 							点击刷新获取...
@@ -293,10 +272,10 @@
 					</div>
 					<div class="card-buttons">
 						<button class="btn btn-copy" onclick="copyTimestamp('local-unix-milliseconds')">
-							📋 复制
+							复制
 						</button>
 						<button class="btn btn-refresh" onclick="refreshTimestamp('local-unix-milliseconds')">
-							🔄 刷新
+							刷新
 						</button>
 					</div>
 				</div>
@@ -315,7 +294,10 @@
 		// 初始化
 		function init() {
 			refreshAllTimestamps();
-			setInterval(updateLocalTimestamps, 1000);
+			// 秒级时间戳每秒刷新
+			setInterval(updateLocalUnixSeconds, 1000);
+			// 毫秒级时间戳每0.3秒刷新
+			setInterval(updateLocalUnixMilliseconds, 300);
 		}
 
 		// 获取本地时间
@@ -341,18 +323,27 @@
 			updateDisplay();
 		}
 
-		// 更新本地时间戳
-		function updateLocalTimestamps() {
+		// 更新本地 Unix 秒级时间戳（每秒）
+		function updateLocalUnixSeconds() {
 			const localTime = getLocalTime();
 			timestamps['local-unix-seconds'] = generateUnixSeconds(localTime);
+			updateDisplay(['local-unix-seconds']);
+		}
+
+		// 更新本地 Unix 毫秒级时间戳（每0.3秒）
+		function updateLocalUnixMilliseconds() {
+			const localTime = getLocalTime();
 			timestamps['local-unix-milliseconds'] = generateUnixMilliseconds(localTime);
-			updateDisplay(['local-unix-seconds', 'local-unix-milliseconds']);
+			updateDisplay(['local-unix-milliseconds']);
 		}
 
 		// 刷新单个时间戳
 		function refreshTimestamp(type) {
-			updateLocalTimestamps();
-			updateDisplay([type]);
+			if (type === 'local-unix-seconds') {
+				updateLocalUnixSeconds();
+			} else if (type === 'local-unix-milliseconds') {
+				updateLocalUnixMilliseconds();
+			}
 			showNotification('时间已更新');
 		}
 
@@ -364,10 +355,6 @@
 				const element = document.getElementById(type);
 				if (element && timestamps[type]) {
 					element.textContent = timestamps[type];
-					element.classList.add('animation-pulse');
-					setTimeout(() => {
-						element.classList.remove('animation-pulse');
-					}, 500);
 				}
 			});
 		}
@@ -376,12 +363,12 @@
 		function copyTimestamp(type) {
 			const value = timestamps[type];
 			if (!value) {
-				showNotification('没有可复制的内容', 'error');
+				alert('没有可复制的内容');
 				return;
 			}
 
 			copyToClipboard(value);
-			showNotification('已复制时间戳');
+			alert('已复制时间戳');
 		}
 
 		// 复制到剪贴板
@@ -402,29 +389,8 @@
 		}
 
 		// 显示通知
-		function showNotification(message, type = 'success') {
-			const existingNotification = document.querySelector('.notification');
-			if (existingNotification) {
-				existingNotification.remove();
-			}
-
-			const notification = document.createElement('div');
-			notification.className = 'notification';
-			notification.textContent = message;
-			document.body.appendChild(notification);
-
-			setTimeout(() => {
-				notification.classList.add('show');
-			}, 100);
-
-			setTimeout(() => {
-				notification.classList.remove('show');
-				setTimeout(() => {
-					if (notification.parentNode) {
-						notification.remove();
-					}
-				}, 300);
-			}, 2000);
+		function showNotification(message) {
+			alert(message);
 		}
 
 		// 页面加载完成后初始化

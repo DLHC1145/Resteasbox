@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>一键更改压缩包格式</title>
+  <meta name="description" content="支持 7Z/ZIP/RAR 互相转换。" />
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <style>
+	:root {
+	  --bg: #fff;
+	  --fg: #1e293b;
+	  --muted: #64748b;
+	  --primary: #2563eb;
+	  --primary-hover: #1d4ed8;
+	  --border: #e2e8f0;
+	  --radius: 8px;
+	  --shadow: 0 1px 3px rgba(0,0,0,.1);
+	  --font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Microsoft YaHei', sans-serif;
+	}
+	@media (prefers-color-scheme: dark) {
+	  :root {
+		--bg: #0f172a;
+		--fg: #f1f5f9;
+		--muted: #94a3b8;
+		--primary: #3b82f6;
+		--primary-hover: #2563eb;
+		--border: #334155;
+	  }
+	}
+	* {
+	  box-sizing: border-box;
+	}
+	body {
+	  margin: 0;
+	  font-family: var(--font);
+	  background: var(--bg);
+	  color: var(--fg);
+	  line-height: 1.6;
+	  display: grid;
+	  place-items: center;
+	  min-height: 100vh;
+	  padding: 16px;
+	}
+	.card {
+	  background: var(--bg);
+	  border: 1px solid var(--border);
+	  border-radius: var(--radius);
+	  box-shadow: var(--shadow);
+	  width: 100%;
+	  max-width: 420px;
+	  padding: 24px;
+	}
+	h1 {
+	  margin: 0 0 8px;
+	  font-size: 1.5rem;
+	  text-align: center;
+	}
+	.desc {
+	  margin: 0 0 20px;
+	  font-size: .875rem;
+	  color: var(--muted);
+	  text-align: center;
+	}
+	.select-btn {
+	  display: block;
+	  width: 100%;
+	  padding: 24px;
+	  border: 2px dashed var(--border);
+	  border-radius: var(--radius);
+	  text-align: center;
+	  cursor: pointer;
+	  color: var(--fg);
+	  background: var(--bg);
+	  transition: border-color .2s, background .2s;
+	  font-size: 1rem;
+	  position: relative;
+	}
+	.select-btn:hover {
+	  border-color: var(--primary);
+	  background: #f0f7ff;
+	}
+	.select-btn input[type="file"] {
+	  position: absolute;
+	  inset: 0;
+	  opacity: 0;
+	  cursor: pointer;
+	}
+	.file-info {
+	  margin-top: 12px;
+	  font-size: .875rem;
+	  word-break: break-all;
+	}
+	.file-name {
+	  font-weight: 600;
+	}
+	.file-size {
+	  color: var(--muted);
+	}
+	.controls {
+	  display: flex;
+	  gap: 8px;
+	  margin-top: 16px;
+	  align-items: center;
+	}
+	.controls label {
+	  white-space: nowrap;
+	  font-size: .875rem;
+	  color: var(--muted);
+	}
+	select, button {
+	  height: 40px;
+	  font-size: .875rem;
+	  border-radius: var(--radius);
+	  border: 1px solid var(--border);
+	  background: var(--bg);
+	  color: var(--fg);
+	  flex: 1;
+	}
+	select:focus, button:focus {
+	  outline: 2px solid var(--primary);
+	  outline-offset: 2px;
+	}
+	button {
+	  background: var(--primary);
+	  color: #fff;
+	  border: none;
+	  cursor: pointer;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  gap: 6px;
+	}
+	button:disabled {
+	  opacity: .5;
+	  cursor: not-allowed;
+	}
+	button:not(:disabled):hover {
+	  background: var(--primary-hover);
+	}
+	.spinner {
+	  width: 14px;
+	  height: 14px;
+	  border: 2px solid #fff;
+	  border-top-color: transparent;
+	  border-radius: 50%;
+	  animation: spin 1s linear infinite;
+	}
+	@keyframes spin {
+	  to { transform: rotate(360deg); }
+	}
+	.toast {
+	  position: fixed;
+	  top: 24px;
+	  right: 24px;
+	  background: #22c55e;
+	  color: #fff;
+	  padding: 12px 16px;
+	  border-radius: var(--radius);
+	  box-shadow: var(--shadow);
+	  font-size: .875rem;
+	  opacity: 0;
+	  transform: translateY(-12px);
+	  transition: opacity .3s, transform .3s;
+	  z-index: 9999;
+	}
+	.toast.error {
+	  background: #ef4444;
+	}
+	.toast.show {
+	  opacity: 1;
+	  transform: translateY(0);
+	}
+	@media (prefers-reduced-motion) {
+	  *, .spinner {
+		animation: none;
+	  }
+	}
+  </style>
+</head>
+<body>
+  <div class="card">
+	<h1>一键更改压缩包格式</h1>
+	<p class="desc">支持 7Z/ZIP/RAR 互相转换。</p>
+
+	<!-- 选择文件 -->
+	<label class="select-btn" for="file">
+	  选择压缩包
+	  <input type="file" id="file" />
+	</label>
+
+	<div class="file-info" id="fileInfo" hidden>
+	  <div class="file-name" id="fileName"></div>
+	  <div class="file-size" id="fileSize"></div>
+	</div>
+
+	<div class="controls">
+	  <label for="format">导出格式</label>
+	  <select id="format">
+		<option value="zip">ZIP</option>
+		<option value="rar">RAR</option>
+		<option value="7z">7Z</option>
+	  </select>
+	  <button id="download" disabled>下载</button>
+	</div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+	// 工具函数
+	function fmtSize(bytes) {
+	  if (bytes < 1024) return bytes + ' B';
+	  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+	  return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+	}
+	function sanitize(name) {
+	  return name.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5.\-]+/g, '_');
+	}
+	function showToast(msg, isError = false) {
+	  const toast = document.getElementById('toast');
+	  toast.textContent = msg;
+	  toast.className = 'toast show' + (isError ? ' error' : '');
+	  setTimeout(() => { toast.className = 'toast'; }, 3000);
+	}
+
+	// 获取DOM元素
+	const fileInput = document.getElementById('file');
+	const fileInfo = document.getElementById('fileInfo');
+	const fileName = document.getElementById('fileName');
+	const fileSize = document.getElementById('fileSize');
+	const formatSelect = document.getElementById('format');
+	const downloadBtn = document.getElementById('download');
+	let currentFile = null;
+
+	// 监听文件选择
+	fileInput.addEventListener('change', (e) => {
+	  const f = e.target.files[0];
+	  if (!f) return;
+	  const lowerName = f.name.toLowerCase();
+	  if (!/\.(7z|zip|rar)$/.test(lowerName)) {
+		showToast('仅支持 7z/zip/rar 文件', true);
+		fileInput.value = ''; // 清空输入，避免重复提示
+		return;
+	  }
+	  currentFile = f;
+	  fileName.textContent = f.name;
+	  fileSize.textContent = fmtSize(f.size);
+	  fileInfo.hidden = false;
+	  downloadBtn.disabled = false;
+	});
+
+	// 处理下载（重命名后缀，触发浏览器保存对话框）
+	downloadBtn.addEventListener('click', async () => {
+	  if (!currentFile) return;
+	  const fmt = formatSelect.value;
+	  const originalName = currentFile.name;
+	  let newName = originalName.replace(/\.(7z|zip|rar)$/i, '.' + fmt);
+	  if (newName === originalName) {
+		// 避免后缀没变导致重名，比如原文件没有扩展名或格式不对
+		const dot = originalName.lastIndexOf('.');
+		newName = dot === -1
+		  ? originalName + '_copy.' + fmt
+		  : originalName.slice(0, dot) + '_copy.' + fmt;
+	  }
+	  downloadBtn.disabled = true;
+	  downloadBtn.innerHTML = `<span class="spinner"></span> 导出中…`;
+	  try {
+		const ab = await currentFile.arrayBuffer();
+		const blob = new Blob([ab], { type: 'application/octet-stream' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = sanitize(newName); // 关键：设置下载文件名，触发浏览器保存对话框
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+		showToast('已导出：' + newName);
+	  } catch (err) {
+		showToast('导出失败：' + err.message, true);
+	  } finally {
+		downloadBtn.disabled = false;
+		downloadBtn.textContent = '下载';
+	  }
+	});
+  </script>
+</body>
+</html>
