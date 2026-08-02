@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>植创魔盒</title>
+	<link rel="stylesheet" href="common.css">
+	<link rel="stylesheet" href="home.css">
+</head>
+<body>
+<!-- 新增：Splash全屏弹窗 -->
+<div id="splashPopup">
+  <button id="splashCloseBtn">×</button>
+  <!-- 嵌套链接内容（用iframe承载） -->
+  <iframe id="splashContent" src="" frameborder="0"></iframe>
+</div>
+	<div class="search-section">
+		<div class="search-container">
+			<div class="search-icon-area"></div>
+			<input type="text" id="searchInput" class="search-box" placeholder="搜索软件名称">
+			<div class="search-actions">
+				<span id="searchText" class="search-text">搜索</span>
+			</div>
+		</div>
+		<button id="historyBtn" class="history-btn"></button>
+		<button id="cancelBtn" class="cancel-btn" style="display: none;">取消</button>
+	</div>
+
+	<div id="softwareList" class="software-list"></div>
+
+	<div id="searchResultPage" class="search-result-page">
+		<div class="search-result-header">
+			<div class="search-result-input-wrapper">
+				<div class="search-result-icon-area"></div>
+				<input type="text" id="searchResultInput" class="search-result-input" placeholder="搜索软件名称">
+				<div class="search-result-actions">
+					<span class="search-text">搜索</span>
+				</div>
+			</div>
+			<button id="resultCancelBtn" class="cancel-btn">取消</button>
+		</div>
+		<div id="resultSoftwareList" class="software-list"></div>
+	</div>
+
+	<div id="historyPage" class="history-page">
+		<div class="history-header">
+			<button id="backBtn" class="back-btn">←</button>
+			<div class="history-title">历史记录</div>
+		</div>
+		<div id="historyContent" class="history-content"></div>
+	</div>
+
+<!-- 应用详情弹窗 -->
+<div id="fullscreenModal" class="fullscreen-modal-overlay">
+	<!-- 顶部导航栏 -->
+	<div class="detail-topbar">
+		<button id="fullscreenModalClose" class="detail-back-btn">←</button>
+		<div class="detail-topbar-title">应用详情</div>
+		<div class="detail-topbar-spacer"></div>
+	</div>
+	
+	<!-- 内容滚动区域 -->
+	<div class="detail-scroll-content">
+		<!-- 应用信息头部 -->
+		<div class="detail-app-header">
+			<img id="detailAppIcon" class="detail-app-icon" src="" alt="">
+			<div class="detail-app-info">
+				<h1 id="fullscreenModalTitle" class="detail-app-name"></h1>
+				<div id="fullscreenScore" class="detail-app-score"></div>
+			</div>
+		</div>
+		
+		<!-- 主操作按钮 -->
+		<div class="detail-action-bar">
+			<button id="detailPrimaryBtn" class="detail-primary-btn">立即下载</button>
+		</div>
+		
+		<!-- 截图展示区域 -->
+		<div id="imageShowcase" class="detail-screenshots" style="display: none;">
+			<h2 class="detail-section-title">游戏截图</h2>
+			<div class="image-slider-container">
+				<div id="imageSlider" class="image-slider"></div>
+			</div>
+			<div id="sliderNav" class="slider-dots"></div>
+		</div>
+		
+		<!-- 应用介绍 -->
+		<div class="detail-section">
+			<h2 class="detail-section-title">关于这个应用</h2>
+			<div id="fullscreenDescWrapper" class="detail-desc-box">
+				<div id="fullscreenDesc" class="detail-desc-text"></div>
+			</div>
+		</div>
+		
+		<!-- 下载方式 -->
+		<div class="detail-section">
+			<h2 id="fullscreenDownloadTitle" class="detail-section-title">下载方式</h2>
+			<div id="fullscreenDownloadOptions" class="detail-download-list"></div>
+		</div>
+		
+		<!-- 底部安全间距 -->
+		<div class="detail-bottom-spacer"></div>
+	</div>
+</div>
+
+	<div class="bottom-nav" id="bottomNav"></div>
+
+	<script src="home.js"></script>
+</body>
+</html>

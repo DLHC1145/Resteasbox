@@ -14,6 +14,7 @@
 			background-size: cover;
 		}
 	</style>
+<link rel="stylesheet" href="common.css">
 </head>
 <body>
 <script>
@@ -23,11 +24,11 @@ fetch('https://dlhc1145.github.io/PvZMagicBox/版本号.txt')
 .then(remoteStr => {
 	const remoteVer = Number(remoteStr.trim());
 	setTimeout(() => {
-		window.location.href = localVer - remoteVer <= -0.1 ? '版本过低.html' : 'indexhome.html';
+		window.location.href = localVer - remoteVer <= -0.1 ? '版本过低.html' : 'home.html';
 	}, 900);
 })
 .catch(() => {
-	setTimeout(() => window.location.href = 'indexhome.html', 10);
+	setTimeout(() => window.location.href = 'home.html', 10);
 });
 </script>
 </body>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>你的网站标题</title>
+	<!-- 引入Twikoo样式（可选，优化显示） -->
+	<style>
+		#twikoo {
+			max-width: 1200px;
+			margin: 20px auto;
+			padding: 0 15px;
+			color: #fff;
+			background-color: #1a1a1a;
+			border-radius: 8px;
+			padding: 20px;
+		}
+		.tk-comments {
+			margin-top: 15px;
+		}
+	</style>
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+	<!-- 你的网站内容 -->
+	<h1>你的网站内容区域</h1>
+	
+	<!-- Twikoo评论区 -->
+	<div id="twikoo"></div>
+
+	<!-- 引入Twikoo脚本（国内镜像） -->
+	<script src="https://registry.npmmirror.com/twikoo/1.6.44/files/dist/twikoo.min.js"></script>
+	<script>
+		twikoo.init({
+			// 稳定公共接口（国内可用）
+			envId: 'https://twikoo.iyuu.cn',
+			// 你的网站地址（作为评论区唯一标识，避免与其他页面冲突）
+			url: 'https://box1145.asia/',
+			// 页面标题
+			title: '你的网站页面标题',
+			// 自动填充你的昵称
+			defaultAuthor: 'dlhc',
+			// 自动填充你的邮箱
+			defaultEmail: '2019947085@qq.com',
+			// 自动填充你的网站地址
+			defaultURL: 'https://box1145.asia/',
+			// 评论输入框提示语
+			placeholder: '输入评论即可发送，无需登录'
+		})
+	</script>
+</body>
+</html>

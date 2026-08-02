@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>进制转换器</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+			background-color: #f5f5f5;
+			min-height: 100vh;
+			padding: 20px;
+			color: #333;
+			line-height: 1.6;
+		}
+
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			background: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+			overflow: hidden;
+		}
+
+		.header {
+			background: white;
+			padding: 30px 20px;
+			text-align: center;
+			border-bottom: 1px solid #eee;
+		}
+
+		.header h1 {
+			font-size: 1.8em;
+			margin-bottom: 8px;
+			font-weight: 600;
+			color: #2c3e50;
+		}
+
+		.header p {
+			font-size: 0.9em;
+			color: #666;
+		}
+
+		.main-content {
+			padding: 30px;
+		}
+
+		/* 输入区域 */
+		.input-section {
+			background: white;
+			border-radius: 6px;
+			padding: 25px;
+			margin-bottom: 20px;
+			border: 1px solid #e0e0e0;
+		}
+
+		.input-row {
+			display: flex;
+			gap: 15px;
+			margin-bottom: 20px;
+			align-items: end;
+		}
+
+		.input-group {
+			flex: 1;
+		}
+
+		.input-group label {
+			display: block;
+			margin-bottom: 8px;
+			font-weight: 500;
+			color: #555;
+			font-size: 0.9em;
+		}
+
+		.input-field {
+			width: 100%;
+			padding: 10px 12px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			font-size: 1em;
+			transition: all 0.2s ease;
+			background: white;
+			font-family: 'Courier New', monospace;
+		}
+
+		.input-field:focus {
+			outline: none;
+			border-color: #4a90e2;
+			box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+		}
+
+		/* 进制选择按钮组 */
+		.base-selector {
+			display: flex;
+			gap: 6px;
+			flex-wrap: wrap;
+		}
+
+		.base-btn {
+			padding: 8px 12px;
+			border: 1px solid #ddd;
+			background: white;
+			border-radius: 4px;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			font-weight: 500;
+			font-size: 0.85em;
+			min-width: 70px;
+			text-align: center;
+			color: #555;
+		}
+
+		.base-btn:hover {
+			border-color: #4a90e2;
+			color: #4a90e2;
+		}
+
+		.base-btn.active {
+			background: #4a90e2;
+			color: white;
+			border-color: #4a90e2;
+		}
+
+		/* 自定义进制设置 */
+		.custom-base-setting {
+			background: #f9f9f9;
+			border-radius: 4px;
+			padding: 15px;
+			margin-top: 15px;
+			border-left: 3px solid #4a90e2;
+		}
+
+		.custom-range-group {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			margin-bottom: 10px;
+		}
+
+		.range-slider {
+			flex: 1;
+			height: 4px;
+			border-radius: 2px;
+			background: #ddd;
+			outline: none;
+			-webkit-appearance: none;
+		}
+
+		.range-slider::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 16px;
+			height: 16px;
+			border-radius: 50%;
+			background: #4a90e2;
+			cursor: pointer;
+		}
+
+		.range-slider::-moz-range-thumb {
+			width: 16px;
+			height: 16px;
+			border-radius: 50%;
+			background: #4a90e2;
+			cursor: pointer;
+			border: none;
+		}
+
+		.range-value {
+			background: #4a90e2;
+			color: white;
+			padding: 4px 8px;
+			border-radius: 10px;
+			font-weight: 500;
+			min-width: 35px;
+			text-align: center;
+			font-size: 0.85em;
+		}
+
+		/* 控制按钮 */
+		.control-buttons {
+			text-align: center;
+			margin: 20px 0;
+		}
+
+		.btn {
+			background: #4a90e2;
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 4px;
+			font-size: 0.9em;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			margin: 0 5px;
+		}
+
+		.btn:hover {
+			background: #357abd;
+		}
+
+		.btn:active {
+			transform: translateY(1px);
+		}
+
+		.btn-clear {
+			background: #e74c3c;
+		}
+
+		.btn-clear:hover {
+			background: #c0392b;
+		}
+
+		/* 结果显示区域 */
+		.result-section {
+			background: white;
+			border-radius: 6px;
+			padding: 25px;
+			margin-bottom: 20px;
+			border: 1px solid #e0e0e0;
+		}
+
+		.result-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.result-title {
+			font-size: 1.1em;
+			font-weight: 600;
+			color: #2c3e50;
+		}
+
+		.export-buttons {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+		}
+
+		.export-btn {
+			background: #27ae60;
+			color: white;
+			border: none;
+			padding: 6px 12px;
+			border-radius: 3px;
+			font-size: 0.8em;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		.export-btn:hover {
+			background: #219a52;
+		}
+
+		/* 输出进制选择 */
+		.output-base-selector {
+			margin-bottom: 20px;
+		}
+
+		.output-base-selector label {
+			display: block;
+			margin-bottom: 8px;
+			font-weight: 500;
+			color: #555;
+		}
+
+		/* 结果展示 */
+		.result-display {
+			background: #f8f9fa;
+			border-radius: 4px;
+			padding: 20px;
+			text-align: center;
+			margin-bottom: 20px;
+			border: 1px solid #e0e0e0;
+		}
+
+		.result-label {
+			font-size: 0.85em;
+			color: #666;
+			margin-bottom: 8px;
+		}
+
+		.result-value {
+			font-size: 1.2em;
+			font-weight: 600;
+			color: #2c3e50;
+			word-break: break-all;
+			font-family: 'Courier New', monospace;
+			cursor: pointer;
+			padding: 8px;
+			background: white;
+			border-radius: 3px;
+			border: 1px solid #ddd;
+			transition: all 0.2s ease;
+		}
+
+		.result-value:hover {
+			background: #f0f0f0;
+		}
+
+		/* 所有进制结果 */
+		.all-results {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+			gap: 12px;
+		}
+
+		.mini-result {
+			background: #f8f9fa;
+			padding: 12px;
+			border-radius: 4px;
+			text-align: center;
+			border: 1px solid #e0e0e0;
+			transition: all 0.2s ease;
+		}
+
+		.mini-result:hover {
+			background: #f0f0f0;
+		}
+
+		.mini-result-label {
+			font-size: 0.8em;
+			color: #666;
+			margin-bottom: 5px;
+		}
+
+		.mini-result-value {
+			font-size: 0.9em;
+			font-weight: 500;
+			color: #2c3e50;
+			word-break: break-all;
+			font-family: 'Courier New', monospace;
+			cursor: pointer;
+			padding: 4px;
+			border-radius: 2px;
+			transition: all 0.2s ease;
+		}
+
+		.mini-result-value:hover {
+			background: #e8e8e8;
+		}
+
+		.error-message {
+			color: #e74c3c;
+			font-size: 0.8em;
+			margin-top: 5px;
+			display: none;
+		}
+
+		.footer {
+			text-align: center;
+			padding: 20px;
+			color: #888;
+			font-size: 0.8em;
+			border-top: 1px solid #eee;
+			background: #f9f9f9;
+		}
+
+		/* 响应式设计 */
+		@media (max-width: 768px) {
+			.header h1 {
+				font-size: 1.5em;
+			}
+			
+			.main-content {
+				padding: 20px;
+			}
+			
+			.input-row {
+				flex-direction: column;
+				align-items: stretch;
+			}
+			
+			.base-selector {
+				justify-content: center;
+			}
+			
+			.result-header {
+				flex-direction: column;
+				align-items: stretch;
+				text-align: center;
+			}
+			
+			.export-buttons {
+				justify-content: center;
+			}
+			
+			.btn {
+				display: block;
+				width: 100%;
+				margin: 5px 0;
+			}
+			
+			.all-results {
+				grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+				gap: 10px;
+			}
+		}
+	</style>
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<h1>进制转换器</h1>
+			<p>简洁实用的进制转换工具</p>
+		</div>
+
+		<div class="main-content">
+			<!-- 输入区域 -->
+			<div class="input-section">
+				<div class="input-row">
+					<div class="input-group">
+						<label for="number-input">输入数字</label>
+						<input type="text" id="number-input" class="input-field" placeholder="请输入要转换的数字..." autocomplete="off">
+						<div class="error-message" id="input-error">请输入有效的数字</div>
+					</div>
+				</div>
+				
+				<div class="input-row">
+					<div class="input-group">
+						<label>选择输入进制（2-10进制）</label>
+						<div class="base-selector">
+							<div class="base-btn active" data-base="custom">自定义进制</div>
+						</div>
+						
+						<div class="custom-base-setting">
+							<div class="custom-range-group">
+								<label>进制基数:</label>
+								<div class="range-input">
+									<input type="range" id="custom-base-slider" class="range-slider" min="2" max="10" value="2">
+								</div>
+								<div class="range-value" id="custom-base-value">2</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 控制按钮 -->
+			<div class="control-buttons">
+				<button class="btn" onclick="convertNumber()" id="convertBtn">
+					开始转换
+				</button>
+				<button class="btn btn-clear" onclick="clearAll()">
+					清空
+				</button>
+			</div>
+
+			<!-- 结果显示区域 -->
+			<div class="result-section">
+				<div class="result-header">
+					<div class="result-title">转换结果</div>
+					<div class="export-buttons">
+						<button class="export-btn" onclick="copyResult()">复制结果</button>
+						<button class="export-btn" onclick="exportAsTxt()">导出TXT</button>
+						<button class="export-btn" onclick="exportAsJson()">导出JSON</button>
+					</div>
+				</div>
+
+				<div class="output-base-selector">
+					<label>选择要生成的进制：</label>
+					<div class="base-selector">
+						<div class="base-btn active" data-output="all">全部显示</div>
+						<div class="base-btn" data-output="2">二进制</div>
+						<div class="base-btn" data-output="8">八进制</div>
+						<div class="base-btn" data-output="10">十进制</div>
+						<div class="base-btn" data-output="16">十六进制</div>
+					</div>
+				</div>
+
+				<div class="result-display" id="mainResult" style="display: none;">
+					<div class="result-label" id="resultLabel">转换结果</div>
+					<div class="result-value" id="resultValue" onclick="copyToClipboard(this.textContent)">-</div>
+				</div>
+
+				<div class="all-results" id="allResults" style="display: none;">
+					<!-- 所有进制结果将在这里显示 -->
+				</div>
+			</div>
+		</div>
+
+		<div class="footer">
+			<p>进制转换器 &copy; 2025 | 爱来自红茶</p>
+		</div>
+	</div>
+
+	<script>
+		// 全局变量
+		let inputBase = 2; // 默认为2进制
+		let outputBase = 'all';
+		let customBase = 2;
+		let currentResults = {};
+
+		// 初始化
+		document.addEventListener('DOMContentLoaded', function() {
+			initializeEventListeners();
+			updateCustomBaseDisplay();
+		});
+
+		// 初始化事件监听器
+		function initializeEventListeners() {
+			// 输出进制选择按钮
+			document.querySelectorAll('.base-selector .base-btn[data-output]').forEach(btn => {
+				btn.addEventListener('click', function() {
+					selectOutputBase(this);
+				});
+			});
+
+			// 自定义进制滑块
+			document.getElementById('custom-base-slider').addEventListener('input', updateCustomBase);
+
+			// 输入框回车键
+			document.getElementById('number-input').addEventListener('keypress', function(e) {
+				if (e.key === 'Enter') {
+					convertNumber();
+				}
+			});
+
+			// 实时输入验证
+			document.getElementById('number-input').addEventListener('input', validateInput);
+		}
+
+		// 选择输出进制
+		function selectOutputBase(button) {
+			// 更新按钮状态
+			document.querySelectorAll('.base-selector .base-btn[data-output]').forEach(btn => {
+				btn.classList.remove('active');
+			});
+			button.classList.add('active');
+
+			outputBase = button.dataset.output;
+			displayResults();
+		}
+
+		// 更新自定义进制
+		function updateCustomBase() {
+			const slider = document.getElementById('custom-base-slider');
+			const valueDisplay = document.getElementById('custom-base-value');
+			
+			customBase = parseInt(slider.value);
+			inputBase = customBase; // 输入进制就是自定义进制
+			valueDisplay.textContent = customBase;
+			
+			validateInput();
+		}
+
+		// 更新自定义进制显示
+		function updateCustomBaseDisplay() {
+			document.getElementById('custom-base-value').textContent = customBase;
+		}
+
+		// 验证输入
+		function validateInput() {
+			const input = document.getElementById('number-input');
+			const error = document.getElementById('input-error');
+			const value = input.value.trim();
+
+			if (value === '') {
+				error.style.display = 'none';
+				input.style.borderColor = '#ddd';
+				return true;
+			}
+
+			// 只验证自定义进制输入
+			let isValid = validateCustomInput(value);
+
+			if (isValid) {
+				error.style.display = 'none';
+				input.style.borderColor = '#4a90e2';
+			} else {
+				error.style.display = 'block';
+				input.style.borderColor = '#e74c3c';
+			}
+
+			return isValid;
+		}
+
+		// 验证自定义进制输入
+		function validateCustomInput(value) {
+			if (value === '') return true;
+			
+			const validChars = '0123456789'.substring(0, customBase);
+			const upperValue = value.toUpperCase();
+			
+			for (let char of upperValue) {
+				if (!validChars.includes(char)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		// 进制转换主函数
+		function convertNumber() {
+			const input = document.getElementById('number-input').value.trim();
+			const convertBtn = document.getElementById('convertBtn');
+			
+			if (!input) {
+				alert('请输入要转换的数字！');
+				return;
+			}
+
+			if (!validateInput()) {
+				alert('输入的数字格式不正确！请确保数字符合当前进制规则。');
+				return;
+			}
+
+			try {
+				// 显示加载状态
+				const originalText = convertBtn.innerHTML;
+				convertBtn.innerHTML = '转换中...';
+				convertBtn.disabled = true;
+
+				// 使用setTimeout来模拟异步操作，提供更好的用户体验
+				setTimeout(() => {
+					try {
+						// 转换为十进制（通过自定义进制解析）
+						const upperInput = input.toUpperCase();
+						const decimalValue = parseCustomBase(upperInput);
+
+						if (isNaN(decimalValue) || !isFinite(decimalValue)) {
+							throw new Error('无效的数字');
+						}
+
+						// 检查是否超出安全整数范围
+						if (Math.abs(decimalValue) > Number.MAX_SAFE_INTEGER) {
+							throw new Error(`数字超出安全范围！当前进制(${customBase})下此数字过大。`);
+						}
+
+						// 计算所有进制的结果
+						currentResults = {
+							binary: decimalValue.toString(2),
+							octal: decimalValue.toString(8),
+							decimal: decimalValue.toString(10),
+							hexadecimal: decimalValue.toString(16).toUpperCase()
+						};
+
+						// 显示结果
+						displayResults();
+
+					} catch (error) {
+						alert('转换出错：' + error.message);
+					} finally {
+						// 恢复按钮状态
+						convertBtn.innerHTML = originalText;
+						convertBtn.disabled = false;
+					}
+				}, 300);
+
+			} catch (error) {
+				alert('转换出错：' + error.message);
+				// 恢复按钮状态
+				convertBtn.innerHTML = originalText;
+				convertBtn.disabled = false;
+			}
+		}
+
+		// 解析自定义进制
+		function parseCustomBase(value) {
+			const validChars = '0123456789'.substring(0, customBase);
+			let result = 0;
+			
+			for (let i = 0; i < value.length; i++) {
+				const char = value[i];
+				const digit = validChars.indexOf(char);
+				if (digit === -1) {
+					throw new Error(`无效的字符: ${char}。在${customBase}进制中只能使用: ${validChars}`);
+				}
+				result = result * customBase + digit;
+			}
+			
+			return result;
+		}
+
+		// 显示结果
+		function displayResults() {
+			const mainResult = document.getElementById('mainResult');
+			const allResults = document.getElementById('allResults');
+			const resultLabel = document.getElementById('resultLabel');
+			const resultValue = document.getElementById('resultValue');
+
+			if (outputBase === 'all') {
+				// 显示所有结果
+				mainResult.style.display = 'none';
+				allResults.style.display = 'grid';
+				renderAllResults();
+			} else {
+				// 显示单个结果
+				mainResult.style.display = 'block';
+				allResults.style.display = 'none';
+				
+				const baseNames = {
+					'2': '二进制',
+					'8': '八进制',
+					'10': '十进制',
+					'16': '十六进制'
+				};
+
+				const baseKeys = {
+					'2': 'binary',
+					'8': 'octal',
+					'10': 'decimal',
+					'16': 'hexadecimal'
+				};
+
+				const key = baseKeys[outputBase];
+				const name = baseNames[outputBase];
+
+				resultLabel.textContent = `${name} 结果:`;
+				resultValue.textContent = currentResults[key] || '-';
+			}
+		}
+
+		// 渲染所有结果
+		function renderAllResults() {
+			const container = document.getElementById('allResults');
+			const baseNames = {
+				binary: '二进制',
+				octal: '八进制',
+				decimal: '十进制',
+				hexadecimal: '十六进制'
+			};
+
+			let html = '';
+			for (let [key, value] of Object.entries(currentResults)) {
+				const name = baseNames[key] || key;
+				html += `
+					<div class="mini-result">
+						<div class="mini-result-label">${name}</div>
+						<div class="mini-result-value" onclick="copyToClipboard('${value}')">${value}</div>
+					</div>
+				`;
+			}
+			container.innerHTML = html;
+		}
+
+		// 复制结果
+		function copyResult() {
+			if (Object.keys(currentResults).length === 0) {
+				alert('没有可复制的结果！');
+				return;
+			}
+
+			let textToCopy;
+			if (outputBase === 'all') {
+				textToCopy = Object.entries(currentResults)
+					.map(([key, value]) => {
+						const names = {
+							binary: '二进制',
+							octal: '八进制',
+							decimal: '十进制',
+							hexadecimal: '十六进制'
+						};
+						const name = names[key] || key;
+						return `${name}: ${value}`;
+					})
+					.join('\n');
+			} else {
+				const baseNames = {
+					'2': '二进制',
+					'8': '八进制',
+					'10': '十进制',
+					'16': '十六进制'
+				};
+				const baseKeys = {
+					'2': 'binary',
+					'8': 'octal',
+					'10': 'decimal',
+					'16': 'hexadecimal'
+				};
+				const key = baseKeys[outputBase];
+				const name = baseNames[outputBase];
+				textToCopy = `${name}: ${currentResults[key]}`;
+			}
+
+			copyToClipboard(textToCopy);
+			alert('结果已复制到剪贴板！');
+		}
+
+		// 导出为TXT
+		function exportAsTxt() {
+			if (Object.keys(currentResults).length === 0) {
+				alert('没有可导出的结果！');
+				return;
+			}
+
+			let content = `进制转换结果\n`;
+			content += `转换时间: ${new Date().toLocaleString()}\n`;
+			content += `输入进制: ${customBase}\n`;
+			content += `输入数值: ${document.getElementById('number-input').value}\n\n`;
+			content += `转换结果:\n`;
+
+			const baseNames = {
+				binary: '二进制',
+				octal: '八进制',
+				decimal: '十进制',
+				hexadecimal: '十六进制'
+			};
+
+			for (let [key, value] of Object.entries(currentResults)) {
+				content += `${baseNames[key]}: ${value}\n`;
+			}
+
+			downloadFile(content, '进制转换结果.txt', 'text/plain');
+			alert('TXT文件导出成功！');
+		}
+
+		// 导出为JSON
+		function exportAsJson() {
+			if (Object.keys(currentResults).length === 0) {
+				alert('没有可导出的结果！');
+				return;
+			}
+
+			const exportData = {
+				timestamp: new Date().toISOString(),
+				input_base: customBase,
+				input_value: document.getElementById('number-input').value,
+				results: currentResults
+			};
+
+			const content = JSON.stringify(exportData, null, 2);
+			downloadFile(content, '进制转换结果.json', 'application/json');
+			alert('JSON文件导出成功！');
+		}
+
+		// 下载文件
+		function downloadFile(content, filename, mimeType) {
+			const blob = new Blob([content], { type: mimeType });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = filename;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		}
+
+		// 复制文本到剪贴板
+		function copyToClipboard(text) {
+			if (navigator.clipboard) {
+				navigator.clipboard.writeText(text).then(() => {
+					// 复制成功
+				}).catch(() => {
+					fallbackCopyTextToClipboard(text);
+				});
+			} else {
+				fallbackCopyTextToClipboard(text);
+			}
+		}
+
+		// 备用复制方法
+		function fallbackCopyTextToClipboard(text) {
+			const textArea = document.createElement("textarea");
+			textArea.value = text;
+			textArea.style.position = "fixed";
+			textArea.style.opacity = "0";
+			textArea.style.top = "0";
+			textArea.style.left = "0";
+			
+			document.body.appendChild(textArea);
+			textArea.focus();
+			textArea.select();
+			
+			try {
+				document.execCommand('copy');
+			} catch (err) {
+				console.error('复制失败:', err);
+			}
+			
+			document.body.removeChild(textArea);
+		}
+
+		// 清空所有
+		function clearAll() {
+			document.getElementById('number-input').value = '';
+			document.getElementById('input-error').style.display = 'none';
+			document.getElementById('number-input').style.borderColor = '#ddd';
+			document.getElementById('mainResult').style.display = 'none';
+			document.getElementById('allResults').style.display = 'none';
+			currentResults = {};
+		}
+	</script>
+</body>
+</html>

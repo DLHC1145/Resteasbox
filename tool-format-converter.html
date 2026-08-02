@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>格式转换器 — 植创魔盒</title>
+  <style>
+    body {
+      background: var(--bg-base);
+      min-height: 100dvh;
+      padding: var(--space-lg);
+      padding-bottom: calc(var(--space-xl) + var(--safe-bottom));
+    }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      color: var(--color-blue); font-size: var(--font-size-sm);
+      font-weight: 500; margin-bottom: var(--space-xl); text-decoration: none; cursor: pointer;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .page-header { text-align: center; margin-bottom: var(--space-2xl); }
+    .page-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+      border-radius: var(--radius-2xl); display: flex; align-items: center; justify-content: center;
+      font-size: 32px; margin: 0 auto var(--space-lg);
+      box-shadow: var(--shadow-raised);
+    }
+    .page-title { font-size: var(--font-size-xl); font-weight: 700; color: var(--text-primary); letter-spacing: -0.3px; }
+    .page-sub { font-size: var(--font-size-sm); color: var(--text-tertiary); margin-top: 4px; }
+
+    .mode-tabs {
+      display: flex;
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      padding: 4px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: var(--space-xl);
+      gap: 4px;
+    }
+    .mode-tab {
+      flex: 1; padding: var(--space-md);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-base); font-weight: 600;
+      text-align: center; cursor: pointer; border: none;
+      color: var(--text-secondary);
+      transition: all var(--transition-fast);
+    }
+    .mode-tab.active {
+      background: var(--color-blue);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,122,255,0.30);
+    }
+
+    .upload-area {
+      background: var(--bg-card); border-radius: var(--radius-xl);
+      padding: var(--space-2xl) var(--space-xl); text-align: center;
+      box-shadow: var(--shadow-card); cursor: pointer;
+      transition: all var(--transition-base);
+      border: 2px dashed transparent; margin-bottom: var(--space-lg);
+    }
+    .upload-area:hover {
+      box-shadow: var(--shadow-raised);
+      border-color: rgba(0,122,255,0.20);
+    }
+    .upload-area:active { transform: scale(0.97); }
+    .upload-icon { font-size: 36px; margin-bottom: var(--space-md); }
+    .upload-hint { font-size: var(--font-size-md); font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+    .upload-sub { font-size: var(--font-size-sm); color: var(--text-tertiary); }
+    #fileName { margin-top: var(--space-md); font-size: var(--font-size-sm); color: var(--color-blue); font-weight: 500; word-break: break-all; }
+
+    .panel {
+      background: var(--bg-card); border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-card); padding: var(--space-xl); margin-bottom: var(--space-lg);
+    }
+    .panel-title {
+      font-size: var(--font-size-base); font-weight: 600;
+      color: var(--text-secondary); margin-bottom: var(--space-md);
+      display: flex; align-items: center; gap: var(--space-sm);
+    }
+    textarea {
+      width: 100%; min-height: 200px; max-height: 400px;
+      background: var(--bg-base); border: 1.5px solid transparent;
+      border-radius: var(--radius-lg); padding: var(--space-lg);
+      font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+      font-size: 12px; color: var(--text-primary);
+      resize: vertical; outline: none;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    textarea:focus {
+      border-color: var(--color-blue);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.04), 0 0 0 3px rgba(0,122,255,0.10);
+    }
+
+    .actions {
+      display: flex; gap: var(--space-md); margin-top: var(--space-lg);
+    }
+    .actions .btn { flex: 1; }
+
+    .alert {
+      padding: var(--space-md) var(--space-lg); border-radius: var(--radius-lg);
+      font-size: var(--font-size-sm); margin-top: var(--space-md);
+      display: none; align-items: center; gap: var(--space-sm);
+    }
+    .alert.show { display: flex; }
+    .alert-error   { background:rgba(255,59,48,0.08); color:var(--color-red); border:1px solid rgba(255,59,48,0.15); }
+    .alert-success { background:rgba(52,199,89,0.08); color:var(--color-green); border:1px solid rgba(52,199,89,0.15); }
+    .alert-info    { background:rgba(0,122,255,0.06); color:var(--color-blue); border:1px solid rgba(0,122,255,0.12); }
+
+    .info-box {
+      background: rgba(0,122,255,0.05);
+      border: 1px solid rgba(0,122,255,0.12);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md) var(--space-lg);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-top: var(--space-xl);
+    }
+    .info-box strong { color: var(--text-primary); }
+  </style>
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+
+<a class="back-link" href="home.html">← 返回首页</a>
+
+<div class="page-header">
+  <div class="page-icon">⚡</div>
+  <div class="page-title">格式转换器</div>
+  <div class="page-sub">RTON ↔ JSON 双向转换 · PvZ2 游戏文件专用</div>
+</div>
+
+<!-- Mode Tabs -->
+<div class="mode-tabs">
+  <button class="mode-tab active" id="tabRton2Json" onclick="switchMode('rton2json', this)">RTON → JSON</button>
+  <button class="mode-tab" id="tabJson2Rton" onclick="switchMode('json2rton', this)">JSON → RTON</button>
+</div>
+
+<!-- Upload (RTON mode only) -->
+<div id="uploadArea">
+  <div class="upload-area" onclick="document.getElementById('rtonFile').click()">
+    <div class="upload-icon">📁</div>
+    <div class="upload-hint" id="uploadHint">点击选择 RTON 文件</div>
+    <div class="upload-sub">支持 .bin、.dat 等格式</div>
+    <div id="fileName"></div>
+  </div>
+  <input type="file" id="rtonFile" accept=".bin,.dat,.rton" style="display:none;">
+</div>
+
+<!-- Output -->
+<div class="panel">
+  <div class="panel-title">📝 <span id="outputTitle">JSON 输出</span></div>
+  <textarea id="outputArea" placeholder="转换结果将显示在这里…" spellcheck="false"></textarea>
+</div>
+
+<!-- Input (JSON→RTON mode) -->
+<div class="panel" id="jsonInputPanel" style="display:none;">
+  <div class="panel-title">📥 JSON 输入</div>
+  <textarea id="inputArea" placeholder="粘贴 JSON 内容…" spellcheck="false"></textarea>
+</div>
+
+<!-- Actions -->
+<div class="actions">
+  <button class="btn btn-secondary" id="btnConvert" onclick="doConvert()">⚡ 转换</button>
+  <button class="btn btn-primary" id="btnDownload" onclick="downloadResult()">💾 下载</button>
+</div>
+
+<div class="alert alert-error" id="alertError"></div>
+<div class="alert alert-success" id="alertSuccess"></div>
+
+<div class="info-box">
+  <strong>RTON</strong> 是 Plants vs. Zombies 2 使用的二进制格式。<br>
+  支持与 JSON 的互转，方便进行存档分析和修改。
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="rton2json.js"></script>
+<script src="json2rton.js"></script>
+<script>
+(function() {
+  'use strict';
+  let currentMode = 'rton2json';
+  let lastResult = '';
+
+  window.switchMode = function(mode, el) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+
+    const uploadArea = document.getElementById('uploadArea');
+    const jsonPanel = document.getElementById('jsonInputPanel');
+    const inputPanel = document.getElementById('jsonInputPanel');
+    const outputTitle = document.getElementById('outputTitle');
+    const btnConvert = document.getElementById('btnConvert');
+
+    if (mode === 'json2rton') {
+      uploadArea.style.display = 'none';
+      jsonPanel.style.display = 'block';
+      outputTitle.textContent = 'RTON 输出';
+      btnConvert.textContent = '⚡ 生成 RTON';
+    } else {
+      uploadArea.style.display = 'block';
+      jsonPanel.style.display = 'none';
+      outputTitle.textContent = 'JSON 输出';
+      btnConvert.textContent = '⚡ 转换为 JSON';
+    }
+    document.getElementById('outputArea').value = '';
+    document.getElementById('inputArea').value = '';
+    lastResult = '';
+  };
+
+  // RTON file → JSON
+  document.getElementById('rtonFile').addEventListener('change', async function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('fileName').textContent = '📄 ' + file.name;
+    try {
+      const buf = await file.arrayBuffer();
+      const r2j = new RTON2JSON();
+      r2j.set(new Uint8Array(buf));
+      const json = r2j.get();
+      const pretty = JSON.stringify(JSON.parse(json), null, 2);
+      document.getElementById('outputArea').value = pretty;
+      lastResult = pretty;
+      showSuccess('alertSuccess', '✅ 转换完成！');
+    } catch (err) {
+      showError('alertError', '❌ 转换失败：' + err.message);
+    }
+  });
+
+  window.doConvert = function() {
+    if (currentMode === 'json2rton') {
+      const json = document.getElementById('inputArea').value.trim();
+      if (!json) { showError('alertError', '请先输入 JSON 内容'); return; }
+      try {
+        JSON.parse(json); // validate
+        const j2r = new JSON2RTON();
+        j2r.set(json);
+        const result = j2r.get();
+        lastResult = result;
+        document.getElementById('outputArea').value = '[ RTON 二进制数据，已准备好下载 ]';
+        showSuccess('alertSuccess', '✅ RTON 生成成功，点击「下载」保存');
+      } catch (err) {
+        showError('alertError', '❌ 生成失败：' + err.message);
+      }
+    }
+  };
+
+  window.downloadResult = function() {
+    if (currentMode === 'rton2json') {
+      const val = document.getElementById('outputArea').value;
+      if (!val) return;
+      const blob = new Blob([val], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'converted.json'; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } else {
+      if (!lastResult) return;
+      const data = lastResult instanceof Uint8Array ? lastResult : new Uint8Array(lastResult);
+      const blob = new Blob([data], {type: 'application/octet-stream'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'converted.bin'; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    showToast('文件开始下载');
+  };
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg; el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 5000);
+  }
+  function showSuccess(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg; el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3000);
+  }
+  window.showToast = function(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>JSON文件处理工具</title>
+	<style>
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+			font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+		}
+		
+		body {
+			background-color: #f8f9fa;
+			color: #333;
+			min-height: 100vh;
+			padding: 20px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		.container {
+			background-color: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+			width: 100%;
+			max-width: 600px;
+			padding: 30px;
+			text-align: center;
+		}
+		
+		h1 {
+			color: #2c3e50;
+			margin-bottom: 15px;
+			font-size: 24px;
+			font-weight: 600;
+		}
+		
+		.description {
+			color: #6c757d;
+			margin-bottom: 25px;
+			line-height: 1.5;
+			font-size: 15px;
+		}
+		
+		.upload-area {
+			border: 1px dashed #dee2e6;
+			border-radius: 6px;
+			padding: 30px 20px;
+			margin-bottom: 20px;
+			cursor: pointer;
+			transition: all 0.2s;
+			background-color: #f8f9fa;
+		}
+		
+		.upload-area:hover {
+			background-color: #e9ecef;
+			border-color: #adb5bd;
+		}
+		
+		.upload-area.highlight {
+			background-color: #e7f3ff;
+			border-color: #0d6efd;
+		}
+		
+		.upload-icon {
+			font-size: 40px;
+			color: #6c757d;
+			margin-bottom: 10px;
+		}
+		
+		.file-input {
+			display: none;
+		}
+		
+		.btn {
+			background-color: #0d6efd;
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 14px;
+			transition: background-color 0.2s;
+			margin: 8px 5px;
+			font-weight: 500;
+		}
+		
+		.btn:hover {
+			background-color: #0b5ed7;
+		}
+		
+		.btn:disabled {
+			background-color: #6c757d;
+			cursor: not-allowed;
+		}
+		
+		.btn-download {
+			background-color: #198754;
+		}
+		
+		.btn-download:hover {
+			background-color: #157347;
+		}
+		
+		.status {
+			margin-top: 20px;
+			padding: 12px;
+			border-radius: 4px;
+			display: none;
+			font-size: 14px;
+		}
+		
+		.status.success {
+			background-color: #d1e7dd;
+			color: #0f5132;
+			display: block;
+		}
+		
+		.status.error {
+			background-color: #f8d7da;
+			color: #721c24;
+			display: block;
+		}
+		
+		.file-info {
+			margin-top: 15px;
+			font-size: 14px;
+			color: #6c757d;
+		}
+		
+		.processing {
+			display: none;
+			margin: 20px 0;
+		}
+		
+		.spinner {
+			border: 3px solid rgba(0, 0, 0, 0.1);
+			border-radius: 50%;
+			border-top: 3px solid #0d6efd;
+			width: 24px;
+			height: 24px;
+			animation: spin 1s linear infinite;
+			margin: 0 auto 10px;
+		}
+		
+		@keyframes spin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+		
+		.instructions {
+			background-color: #f8f9fa;
+			border-left: 3px solid #0d6efd;
+			padding: 15px;
+			margin: 20px 0;
+			text-align: left;
+			border-radius: 0 4px 4px 0;
+			font-size: 14px;
+		}
+		
+		.instructions h3 {
+			color: #2c3e50;
+			margin-bottom: 10px;
+			font-size: 16px;
+		}
+		
+		.instructions ul {
+			padding-left: 20px;
+		}
+		
+		.instructions li {
+			margin-bottom: 8px;
+			color: #6c757d;
+		}
+		
+		.preview {
+			margin-top: 20px;
+			text-align: left;
+			display: none;
+		}
+		
+		.preview h3 {
+			color: #2c3e50;
+			margin-bottom: 10px;
+			font-size: 16px;
+		}
+		
+		.preview-content {
+			background-color: #f8f9fa;
+			border: 1px solid #e9ecef;
+			border-radius: 4px;
+			padding: 15px;
+			max-height: 200px;
+			overflow-y: auto;
+			font-family: 'Courier New', monospace;
+			font-size: 12px;
+			white-space: pre-wrap;
+		}
+	</style>
+<link rel="stylesheet" href="common.css">
+</head>
+<body>
+	<div class="container">
+		<h1>JSON文件处理工具</h1>
+		<p class="description">上传JSON文件，系统将自动删除包含"768"的字段，然后您可以下载处理后的文件。</p>
+		
+		<div class="instructions">
+			<h3>使用说明：</h3>
+			<ul>
+				<li>点击上传区域或按钮选择JSON文件</li>
+				<li>系统将自动处理文件，删除所有包含"768"的字段</li>
+				<li>处理完成后，下载按钮将变为可用状态</li>
+				<li>点击下载按钮获取处理后的文件</li>
+			</ul>
+		</div>
+		
+		<div id="uploadArea" class="upload-area">
+			<div class="upload-icon">📁</div>
+			<p>拖放文件到此处或点击上传</p>
+			<input type="file" id="fileInput" class="file-input" accept=".json,.txt">
+		</div>
+		
+		<button id="uploadBtn" class="btn">选择文件</button>
+		
+		<div id="processing" class="processing">
+			<div class="spinner"></div>
+			<p>正在处理文件...</p>
+		</div>
+		
+		<div id="status" class="status"></div>
+		
+		<div id="fileInfo" class="file-info"></div>
+		
+		<div id="preview" class="preview">
+			<h3>处理预览：</h3>
+			<div id="previewContent" class="preview-content"></div>
+		</div>
+		
+		<button id="downloadBtn" class="btn btn-download" disabled>下载处理后的文件</button>
+	</div>
+
+	<script>
+		// 定义完整的Blob构造函数，确保兼容性
+		if (typeof Blob === 'undefined') {
+			window.Blob = function(parts, properties) {
+				properties = properties || {};
+				var type = properties.type || '';
+				var endings = properties.endings || 'transparent';
+				
+				var blob = new (window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder)();
+				
+				if (blob.append) {
+					for (var i = 0; i < parts.length; i++) {
+						blob.append(parts[i]);
+					}
+					return blob.getBlob(type);
+				}
+				
+				// 如果以上都不支持，返回一个模拟的Blob对象
+				return {
+					size: parts.reduce(function(size, part) {
+						return size + (part.size || part.length || 0);
+					}, 0),
+					type: type,
+					slice: function() {
+						console.warn('Blob.slice() not supported in this browser');
+						return null;
+					}
+				};
+			};
+		}
+
+		// 确保URL.createObjectURL存在
+		if (!window.URL) {
+			window.URL = window.URL || window.webkitURL;
+		}
+		
+		if (!URL.createObjectURL) {
+			URL.createObjectURL = function(blob) {
+				if (window.webkitURL) {
+					return window.webkitURL.createObjectURL(blob);
+				} else if (window.URL && window.URL.createObjectURL) {
+					return window.URL.createObjectURL(blob);
+				} else {
+					// 如果不支持createObjectURL，使用数据URL
+					return 'data:application/octet-stream;base64,' + btoa(blob);
+				}
+			};
+		}
+
+		// 确保FileReader存在
+		if (!window.FileReader) {
+			window.FileReader = function() {
+				this.readAsText = function(file) {
+					// 模拟FileReader功能
+					var self = this;
+					setTimeout(function() {
+						if (self.onload) {
+							self.onload({target: {result: 'FileReader not supported'}});
+						}
+					}, 100);
+				};
+			};
+		}
+
+		document.addEventListener('DOMContentLoaded', function() {
+			const uploadArea = document.getElementById('uploadArea');
+			const fileInput = document.getElementById('fileInput');
+			const uploadBtn = document.getElementById('uploadBtn');
+			const downloadBtn = document.getElementById('downloadBtn');
+			const statusDiv = document.getElementById('status');
+			const fileInfoDiv = document.getElementById('fileInfo');
+			const processingDiv = document.getElementById('processing');
+			const previewDiv = document.getElementById('preview');
+			const previewContent = document.getElementById('previewContent');
+			
+			let processedContent = null;
+			let originalFileName = '';
+			
+			// 点击上传区域触发文件选择
+			uploadArea.addEventListener('click', function() {
+				fileInput.click();
+			});
+			
+			// 点击上传按钮触发文件选择
+			uploadBtn.addEventListener('click', function() {
+				fileInput.click();
+			});
+			
+			// 拖放功能
+			['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+				uploadArea.addEventListener(eventName, preventDefaults, false);
+			});
+			
+			function preventDefaults(e) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			
+			['dragenter', 'dragover'].forEach(eventName => {
+				uploadArea.addEventListener(eventName, highlight, false);
+			});
+			
+			['dragleave', 'drop'].forEach(eventName => {
+				uploadArea.addEventListener(eventName, unhighlight, false);
+			});
+			
+			function highlight() {
+				uploadArea.classList.add('highlight');
+			}
+			
+			function unhighlight() {
+				uploadArea.classList.remove('highlight');
+			}
+			
+			// 处理文件拖放
+			uploadArea.addEventListener('drop', handleDrop, false);
+			
+			function handleDrop(e) {
+				const dt = e.dataTransfer;
+				const files = dt.files;
+				handleFiles(files);
+			}
+			
+			// 处理文件选择
+			fileInput.addEventListener('change', function() {
+				handleFiles(this.files);
+			});
+			
+			function handleFiles(files) {
+				if (files.length === 0) return;
+				
+				const file = files[0];
+				originalFileName = file.name;
+				
+				// 检查文件类型
+				if (!file.name.endsWith('.json') && !file.name.endsWith('.txt')) {
+					statusDiv.textContent = '请选择JSON文件或文本文件';
+					statusDiv.className = 'status error';
+					return;
+				}
+				
+				// 显示文件信息
+				fileInfoDiv.textContent = `已选择文件: ${file.name} (${formatFileSize(file.size)})`;
+				
+				// 显示处理中状态
+				processingDiv.style.display = 'block';
+				statusDiv.className = 'status';
+				downloadBtn.disabled = true;
+				previewDiv.style.display = 'none';
+				
+				// 读取文件内容
+				const reader = new FileReader();
+				
+				reader.onload = function(e) {
+					try {
+						const content = e.target.result;
+						
+						// 处理文件内容 - 删除包含"768"的字段
+						processedContent = processJSONContent(content);
+						
+						// 显示预览
+						previewContent.textContent = processedContent.substring(0, 1000) + (processedContent.length > 1000 ? '...' : '');
+						previewDiv.style.display = 'block';
+						
+						// 显示成功状态
+						statusDiv.textContent = '文件处理成功！';
+						statusDiv.className = 'status success';
+						downloadBtn.disabled = false;
+					} catch (error) {
+						// 显示错误状态
+						statusDiv.textContent = '处理文件时出错: ' + error.message;
+						statusDiv.className = 'status error';
+					} finally {
+						processingDiv.style.display = 'none';
+					}
+				};
+				
+				reader.onerror = function() {
+					statusDiv.textContent = '读取文件时出错';
+					statusDiv.className = 'status error';
+					processingDiv.style.display = 'none';
+				};
+				
+				reader.readAsText(file);
+			}
+			
+			function processJSONContent(content) {
+				// 解析JSON
+				const data = JSON.parse(content);
+				
+				// 处理JSON数据，删除包含"768"的字段
+				const processedData = processJSONObject(data);
+				
+				// 返回格式化的JSON
+				return JSON.stringify(processedData, null, 2);
+			}
+			
+			function processJSONObject(obj) {
+				if (typeof obj !== 'object' || obj === null) return obj;
+				
+				if (Array.isArray(obj)) {
+					// 处理数组
+					const result = [];
+					for (const item of obj) {
+						// 检查数组项是否为对象且包含"ID"字段
+						if (typeof item === 'object' && item !== null && item.ID) {
+							// 跳过包含"768"的ID
+							if (!item.ID.includes('768')) {
+								result.push(processJSONObject(item));
+							}
+						} else {
+							result.push(processJSONObject(item));
+						}
+					}
+					return result;
+				} else {
+					// 处理对象
+					const result = {};
+					for (const [key, value] of Object.entries(obj)) {
+						// 跳过包含"768"的键
+						if (!key.includes('768')) {
+							result[key] = processJSONObject(value);
+						}
+					}
+					return result;
+				}
+			}
+			
+			function formatFileSize(bytes) {
+				if (bytes === 0) return '0 Bytes';
+				const k = 1024;
+				const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+				const i = Math.floor(Math.log(bytes) / Math.log(k));
+				return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+			}
+			
+			// 下载处理后的文件
+			downloadBtn.addEventListener('click', function() {
+				if (!processedContent) return;
+				
+				try {
+					// 创建下载链接 - 使用完整的Blob类型定义
+					const blob = new Blob([processedContent], { 
+						type: 'application/json;charset=utf-8'
+					});
+					
+					// 确保URL.createObjectURL可用
+					if (URL && URL.createObjectURL) {
+						const url = URL.createObjectURL(blob);
+						const a = document.createElement('a');
+						a.href = url;
+						
+						// 生成新的文件名
+						const nameWithoutExt = originalFileName.lastIndexOf('.') > 0 ? 
+							originalFileName.substring(0, originalFileName.lastIndexOf('.')) : 
+							originalFileName;
+						
+						a.download = `${nameWithoutExt}_processed.json`;
+						a.style.display = 'none';
+						
+						// 触发下载
+						document.body.appendChild(a);
+						a.click();
+						document.body.removeChild(a);
+						
+						// 清理URL
+						setTimeout(function() {
+							URL.revokeObjectURL(url);
+						}, 100);
+					} else {
+						// 如果不支持createObjectURL，使用备用方法
+						const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(processedContent);
+						const a = document.createElement('a');
+						a.href = dataStr;
+						
+						const nameWithoutExt = originalFileName.lastIndexOf('.') > 0 ? 
+							originalFileName.substring(0, originalFileName.lastIndexOf('.')) : 
+							originalFileName;
+						
+						a.download = `${nameWithoutExt}_processed.json`;
+						a.style.display = 'none';
+						document.body.appendChild(a);
+						a.click();
+						document.body.removeChild(a);
+					}
+				} catch (error) {
+					console.error('下载错误:', error);
+					statusDiv.textContent = '下载文件时出错: ' + error.message;
+					statusDiv.className = 'status error';
+				}
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+/* ============================================
+   PVZ Tools - Material You 主题样式
+   设计风格：安卓15 Material Design 3
+   主题色：PVZ 绿色系
+   ============================================ */
+
+/* ---------- 设计令牌 (Design Tokens) ---------- */
+:root {
+  /* 主色 - PVZ 绿 */
+  --md-primary: #2E7D32;
+  --md-on-primary: #FFFFFF;
+  --md-primary-container: #C8E6C9;
+  --md-on-primary-container: #003300;
+
+  /* 次级色 - 向日葵橙 */
+  --md-secondary: #F57C00;
+  --md-on-secondary: #FFFFFF;
+  --md-secondary-container: #FFE0B2;
+  --md-on-secondary-container: #231900;
+
+  /* 中性色 */
+  --md-surface: #FAFCFA;
+  --md-surface-variant: #E8F5E9;
+  --md-on-surface: #1A1C19;
+  --md-on-surface-variant: #414941;
+  --md-outline: #717971;
+  --md-outline-variant: #C1C9C1;
+
+  /* 背景 */
+  --md-background: #F5F7F5;
+
+  /* 圆角 - Material 3 标准 */
+  --md-radius-xs: 8px;
+  --md-radius-sm: 12px;
+  --md-radius-md: 16px;
+  --md-radius-lg: 20px;
+  --md-radius-xl: 28px;
+  --md-radius-full: 9999px;
+
+  /* 阴影 - Material 3 柔和阴影 */
+  --md-shadow-1: 0 1px 2px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.08);
+  --md-shadow-2: 0 1px 4px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.08);
+  --md-shadow-3: 0 4px 8px rgba(0,0,0,0.07), 0 8px 16px rgba(0,0,0,0.08);
+
+  /* 间距 */
+  --md-space-1: 4px;
+  --md-space-2: 8px;
+  --md-space-3: 12px;
+  --md-space-4: 16px;
+  --md-space-5: 20px;
+  --md-space-6: 24px;
+  --md-space-8: 32px;
+
+  /* 过渡 */
+  --md-transition: 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ---------- 全局重置 ---------- */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background-color: var(--md-background);
+  color: var(--md-on-surface);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- 滚动条美化 ---------- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--md-outline-variant);
+  border-radius: var(--md-radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--md-outline);
+}
+
+/* ---------- 卡片组件 ---------- */
+.md-card {
+  background: var(--md-surface);
+  border-radius: var(--md-radius-lg);
+  box-shadow: var(--md-shadow-1);
+  overflow: hidden;
+  transition: box-shadow var(--md-transition);
+}
+.md-card:hover {
+  box-shadow: var(--md-shadow-2);
+}
+
+/* ---------- 按钮组件 ---------- */
+.md-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border: none;
+  border-radius: var(--md-radius-full);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--md-transition);
+  text-decoration: none;
+  user-select: none;
+}
+
+/* 填充按钮 */
+.md-btn-filled {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  box-shadow: var(--md-shadow-1);
+}
+.md-btn-filled:hover {
+  background: #1B5E20;
+  box-shadow: var(--md-shadow-2);
+}
+.md-btn-filled:active {
+  box-shadow: var(--md-shadow-1);
+  transform: scale(0.98);
+}
+
+/* 轮廓按钮 */
+.md-btn-outlined {
+  background: transparent;
+  color: var(--md-primary);
+  border: 1px solid var(--md-outline);
+}
+.md-btn-outlined:hover {
+  background: rgba(46, 125, 50, 0.08);
+  border-color: var(--md-primary);
+}
+
+/* 文字按钮 */
+.md-btn-text {
+  background: transparent;
+  color: var(--md-primary);
+  padding: 10px 16px;
+}
+.md-btn-text:hover {
+  background: rgba(46, 125, 50, 0.08);
+}
+
+/* ---------- 输入框组件 ---------- */
+.md-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-radius-md);
+  font-size: 15px;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  transition: all var(--md-transition);
+  outline: none;
+}
+.md-input:focus {
+  border-color: var(--md-primary);
+  border-width: 2px;
+  padding: 13px 15px;
+  box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.12);
+}
+.md-input::placeholder {
+  color: var(--md-on-surface-variant);
+  opacity: 0.7;
+}
+
+/* ---------- 顶部导航栏 ---------- */
+.md-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--md-surface);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--md-shadow-1);
+}
+.md-topbar-title {
+  font-size: 20px;
+  font-weight: 500;
+  flex: 1;
+}
+
+/* ---------- 底部导航栏 ---------- */
+.md-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--md-surface);
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  box-shadow: 0 -1px 3px rgba(0,0,0,0.05), 0 -1px 8px rgba(0,0,0,0.04);
+  z-index: 100;
+}
+.md-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 16px;
+  border-radius: var(--md-radius-md);
+  color: var(--md-on-surface-variant);
+  font-size: 12px;
+  text-decoration: none;
+  transition: all var(--md-transition);
+  cursor: pointer;
+}
+.md-nav-item.active {
+  color: var(--md-primary);
+  background: var(--md-primary-container);
+}
+.md-nav-item img {
+  width: 24px;
+  height: 24px;
+  opacity: 0.8;
+}
+.md-nav-item.active img {
+  opacity: 1;
+}
+
+/* ---------- 列表项 ---------- */
+.md-list-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--md-surface);
+  border-bottom: 1px solid var(--md-outline-variant);
+  transition: background var(--md-transition);
+  cursor: pointer;
+}
+.md-list-item:hover {
+  background: var(--md-surface-variant);
+}
+.md-list-item:last-child {
+  border-bottom: none;
+}
+
+/* ---------- 标签/Chip ---------- */
+.md-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--md-radius-full);
+  background: var(--md-surface-variant);
+  color: var(--md-on-surface-variant);
+  font-size: 13px;
+}
+
+/* ---------- 工具页面通用布局 ---------- */
+.tool-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  padding-bottom: 40px;
+}
+.tool-page-header {
+  margin-bottom: 24px;
+}
+.tool-page-title {
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--md-on-surface);
+  margin-bottom: 8px;
+}
+.tool-page-desc {
+  font-size: 14px;
+  color: var(--md-on-surface-variant);
+}
+.tool-section {
+  background: var(--md-surface);
+  border-radius: var(--md-radius-lg);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--md-shadow-1);
+}
+.tool-section-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: var(--md-on-surface);
+}
+
+/* ---------- 返回按钮 ---------- */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--md-radius-full);
+  color: var(--md-primary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background var(--md-transition);
+  margin-bottom: 16px;
+}
+.back-btn:hover {
+  background: rgba(46, 125, 50, 0.08);
+}
+
+/* ---------- 响应式适配 ---------- */
+@media (max-width: 480px) {
+  .tool-page {
+    padding: 16px 12px;
+  }
+  .tool-page-title {
+    font-size: 24px;
+  }
+  .tool-section {
+    padding: 16px;
+    border-radius: var(--md-radius-md);
+  }
+}
+
+/* ---------- 动画 ---------- */
+@keyframes md-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.md-fade-in {
+  animation: md-fade-in 0.3s ease-out;
+}
+
+/* ---------- 通用元素美化（自动生效） ---------- */
+/* 按钮 */
+button, input[type="button"], input[type="submit"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border: none;
+  border-radius: var(--md-radius-full);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--md-transition);
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  box-shadow: var(--md-shadow-1);
+  font-family: inherit;
+}
+button:hover, input[type="button"]:hover, input[type="submit"]:hover {
+  background: #1B5E20;
+  box-shadow: var(--md-shadow-2);
+}
+button:active, input[type="button"]:active, input[type="submit"]:active {
+  transform: scale(0.98);
+}
+
+/* 输入框 */
+input[type="text"], input[type="number"], input[type="password"],
+input[type="email"], input[type="search"], textarea, select {
+  padding: 12px 14px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-radius-md);
+  font-size: 14px;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  transition: all var(--md-transition);
+  outline: none;
+  font-family: inherit;
+}
+input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus,
+input[type="email"]:focus, input[type="search"]:focus, textarea:focus, select:focus {
+  border-color: var(--md-primary);
+  border-width: 2px;
+  padding: 11px 13px;
+  box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.12);
+}
+textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* 链接 */
+a {
+  color: var(--md-primary);
+  transition: color var(--md-transition);
+}
+a:hover {
+  color: #1B5E20;
+}
+
+/* 表格 */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: var(--md-radius-md);
+  overflow: hidden;
+  box-shadow: var(--md-shadow-1);
+}
+th, td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--md-outline-variant);
+}
+th {
+  background: var(--md-surface-variant);
+  font-weight: 500;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* 代码块 */
+code, pre {
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  background: var(--md-surface-variant);
+  border-radius: var(--md-radius-xs);
+}
+code {
+  padding: 2px 6px;
+  font-size: 0.9em;
+}
+pre {
+  padding: 16px;
+  border-radius: var(--md-radius-md);
+  overflow-x: auto;
+}
+
+/* 分割线 */
+hr {
+  border: none;
+  height: 1px;
+  background: var(--md-outline-variant);
+  margin: 16px 0;
+}
